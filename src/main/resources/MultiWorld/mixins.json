@@ -1,0 +1,8 @@
+{
+    "package": "codecrafter47.multiworld.mixins",
+    "mixins": [
+        "CustomWorldLoading",
+        "FixBiomeGenerator",
+        "ImplementChatAPI"
+    ]
+}
