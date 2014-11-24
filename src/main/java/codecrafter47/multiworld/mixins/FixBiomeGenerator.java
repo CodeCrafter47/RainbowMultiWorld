@@ -61,13 +61,13 @@ public class FixBiomeGenerator {
 				}
 				else if (generationType == GenerationType.NETHER) {
 					this.biomeGenerator = new BiomeGenerator(BiomeBase.Hell, 0.0F, this.dimension);
-					this.d = true;
-					this.skipNightAndDay = true;
+					//this.d = true;
+					//this.skipNightAndDay = true;
 
 				}
 				else if (generationType == GenerationType.END) {
 					this.biomeGenerator = new BiomeGenerator(BiomeBase.TheEnd, 0.0F, this.dimension);
-					this.skipNightAndDay = true;
+					//this.skipNightAndDay = true;
 
 				}
 			}
