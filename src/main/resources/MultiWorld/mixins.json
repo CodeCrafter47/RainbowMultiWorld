@@ -4,6 +4,7 @@
         "CustomWorldLoading",
         "FixBiomeGenerator",
         "FixChunkProvider",
-        "ImplementChatAPI"
+        "ImplementChatAPI",
+        "InjectEnvironment"
     ]
 }

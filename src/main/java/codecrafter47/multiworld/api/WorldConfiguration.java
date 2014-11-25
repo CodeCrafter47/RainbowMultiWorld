@@ -17,4 +17,5 @@ public class WorldConfiguration {
 	boolean keepSpawnInMemory = true;
 	GameMode gameMode = GameMode.SURVIVAL;
 	Difficulty difficulty = Difficulty.NORMAL;
+	Environment environment = Environment.OVERWORLD;
 }

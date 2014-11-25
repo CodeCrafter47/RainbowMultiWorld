@@ -3,6 +3,7 @@ package codecrafter47.multiworld.commands;
 import PluginReference.*;
 import codecrafter47.multiworld.PluginMultiWorld;
 import codecrafter47.multiworld.api.ChatPlayer;
+import codecrafter47.multiworld.api.Environment;
 import codecrafter47.multiworld.api.GenerationType;
 import codecrafter47.multiworld.api.WorldConfiguration;
 import codecrafter47.multiworld.manager.WorldManager;
@@ -106,6 +107,10 @@ public class MainCommand implements MC_Command {
 				break;
 			case "difficulty":
 				configuration.setDifficulty(Difficulty.valueOf(value));
+				plugin.getStorageManager().saveData();
+				break;
+			case "environment":
+				configuration.setEnvironment(Environment.valueOf(value));
 				plugin.getStorageManager().saveData();
 				break;
 			case "seed":
@@ -234,6 +239,17 @@ public class MainCommand implements MC_Command {
 		}
 		// SEED
 		player.sendMessage(ChatUtil.parseString("&6Seed: [&f" + worldRegistration.settings.seed + "][/MultiWorld modify " + id + " seed " + worldRegistration.settings.seed + "]{&6change seed\nyou need to enter a number}"));
+		// ENVIRONMENT
+		options = "";
+		for (Environment type : Environment.values()) {
+			if (type == configuration.getEnvironment()) {
+				options += "&a&l" + type.name() + " ";
+			}
+			else {
+				options += "&r&7[" + type.name() + "](/MultiWorld modify " + id + " environment " + type.name() + ") ";
+			}
+		}
+		player.sendMessage(ChatUtil.parseString("[&6Environment:]{&6environment describes how the sky looks} " + options));
 		// GAMEMODE
 		options = "";
 		for (GameMode type : GameMode.values()) {
