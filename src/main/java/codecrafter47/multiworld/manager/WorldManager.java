@@ -73,7 +73,6 @@ public class WorldManager {
 		}
 		WorldServer myWorld;//  = (WorldServer) (new AlternateDimensionWorld(server, dataManager, dimenForWorld, server.worldServers[0], server.methodProfiler)).prepareWorldAndReturnObject();
 		myWorld = (WorldServer)(new WorldServer(server, dataManager, worldData, dimenForWorld, server.methodProfiler)).prepareWorldAndReturnObject();
-		myWorld.initializeLevel(ws);
 		servers[dimenForWorld] = myWorld;
 		server.worldServers = servers;
 

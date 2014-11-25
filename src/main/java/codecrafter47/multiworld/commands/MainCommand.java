@@ -12,6 +12,7 @@ import joebkt.Difficulty;
 import joebkt.GameMode;
 import joebkt._WorldMaster;
 import joebkt._WorldRegistration;
+import net.minecraft.server.MinecraftServer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,10 +105,12 @@ public class MainCommand implements MC_Command {
 			case "gamemode":
 				configuration.setGameMode(GameMode.valueOf(value));
 				plugin.getStorageManager().saveData();
+				MinecraftServer.getServer().getWorldServerByDimension(id).getWorldData().setGameMode(configuration.getGameMode());
 				break;
 			case "difficulty":
 				configuration.setDifficulty(Difficulty.valueOf(value));
 				plugin.getStorageManager().saveData();
+				MinecraftServer.getServer().getWorldServerByDimension(id).getWorldData().setDifficulty(configuration.getDifficulty());
 				break;
 			case "environment":
 				configuration.setEnvironment(Environment.valueOf(value));
@@ -129,10 +132,12 @@ public class MainCommand implements MC_Command {
 			case "allowAnimals":
 				configuration.setSpawnAnimals(!configuration.isSpawnAnimals());
 				plugin.getStorageManager().saveData();
+				MinecraftServer.getServer().getWorldServerByDimension(id).setTwoBools(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
 				break;
 			case "allowMonsters":
 				configuration.setSpawnMonsters(!configuration.isSpawnMonsters());
 				plugin.getStorageManager().saveData();
+				MinecraftServer.getServer().getWorldServerByDimension(id).setTwoBools(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
 				break;
 			case "generateStructures":
 				worldRegistration.settings.generateStructures = !worldRegistration.settings.generateStructures;
