@@ -49,9 +49,11 @@ public class PluginMultiWorld extends PluginBase {
 		server.registerCommand(new MainCommand(this));
 	}
 
-	public void onItsTimeToLoadCustomWorlds(){
-		for(_WorldRegistration registration: _WorldMaster.worldRegs){
-			getWorldManager().loadWorld(registration.dimension);
+	public void onItsTimeToLoadCustomWorlds() {
+		for (_WorldRegistration registration : _WorldMaster.worldRegs) {
+			if (getStorageManager().getCustomConfig(registration.dimension).isLoadOnStartup()) {
+				getWorldManager().loadWorld(registration.dimension);
+			}
 		}
 	}
 
@@ -76,7 +78,7 @@ public class PluginMultiWorld extends PluginBase {
 
 	@Override public PluginInfo getPluginInfo() {
 		PluginInfo info = super.getPluginInfo();
-		if(info == null){
+		if (info == null) {
 			info = new PluginInfo();
 		}
 		info.name = "MultiWorld";
