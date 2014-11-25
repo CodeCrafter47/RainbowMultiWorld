@@ -42,7 +42,13 @@ public class MainCommand implements MC_Command {
 		}
 		else if (strings[0].equals("create") && strings.length > 1) {
 			String name = strings[1];
-			showWorldDetails((ChatPlayer) player, plugin.getServer().registerWorld(name, new MC_WorldSettings()));
+			MC_WorldSettings mc_worldSettings = new MC_WorldSettings();
+			mc_worldSettings.generateStructures = true;
+			mc_worldSettings.seed = System.currentTimeMillis();
+			int id = plugin.getServer().registerWorld(name, mc_worldSettings);
+			plugin.getStorageManager().getCustomConfig(id).setGenerationType(GenerationType.OVERWORLD);
+			plugin.getStorageManager().saveData();
+			showWorldDetails((ChatPlayer) player, id);
 		}
 		else if (strings[0].equals("load") && strings.length == 2) {
 			int id = Integer.valueOf(strings[1]);
@@ -91,6 +97,10 @@ public class MainCommand implements MC_Command {
 			case "generatorOptions":
 				configuration.setWorldGeneratorOptions(value);
 				plugin.getStorageManager().saveData();
+				break;
+			case "seed":
+				worldRegistration.settings.seed = Long.valueOf(value);
+				_WorldMaster.SaveData();
 				break;
 			default:
 				plugin.getLogger().warn("player tried to set invalid flag: " + flag + "=" + value);
@@ -205,6 +215,7 @@ public class MainCommand implements MC_Command {
 		if (configuration.getGenerationType() != GenerationType.NETHER && configuration.getGenerationType() != GenerationType.END && worldRegistration.settings.levelType == MC_WorldLevelType.FLAT) {
 			player.sendMessage(ChatUtil.parseString("&6GeneratorOptions: \"" + configuration.getWorldGeneratorOptions() + "\" *&e[(edit)][/MultiWorld modify " + id + " generatorOptions " + configuration.getWorldGeneratorOptions() + " ]"));
 		}
+		player.sendMessage(ChatUtil.parseString("&6Seed: [&f" + worldRegistration.settings.seed + "][/MultiWorld modify " + id + " seed " + worldRegistration.settings.seed + "]{&6change seed}"));
 		player.sendMessage(ChatUtil.parseString("&6Flags: " +
 				(configuration.isSpawnAnimals() ? "&a" : "&7") + "[allowAnimals](/MultiWorld modify " + id + " allowAnimals) " +
 				(configuration.isSpawnMonsters() ? "&a" : "&7") + "[allowMonsters](/MultiWorld modify " + id + " allowMonsters) " +

@@ -49,6 +49,9 @@ public class WorldManager {
 		if (worldData == null) {
 			worldData = new WorldData(ws, fileWorldName);
 			System.out.println(String.format("- New WorldData, seed %d", worldData.getSeed()));
+		} else {
+			// apply world settings anyway
+			worldData.setWorldSettings(ws);
 		}
 
 		IntegerCoordinates customSpawn = new IntegerCoordinates(0, 100, 0);
