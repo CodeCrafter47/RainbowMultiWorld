@@ -43,7 +43,7 @@ public class WorldManager {
 		entry.internal_loadedWorldIdx = server.worldServers.length;
 		IDataManager dataManager = ((WorldStorageInterface)m_worldStorageInterface.get(server)).createNewWorldStorage(fileWorldName, true);
 		LevelType tgtLevelType = PluginHelper.TranslateLevelType(entry.settings.levelType);
-		WorldSettings ws = new WorldSettings(entry.settings.seed, GameMode.SURVIVAL, entry.settings.generateStructures, server.getServerIsHardcore(), tgtLevelType);
+		WorldSettings ws = new WorldSettings(entry.settings.seed, configuration.getGameMode(), entry.settings.generateStructures, server.getServerIsHardcore(), tgtLevelType);
 		ws.setInnerName(configuration.getWorldGeneratorOptions());
 		WorldData worldData = dataManager.getDefaultWorldDataMaybe();
 		if (worldData == null) {

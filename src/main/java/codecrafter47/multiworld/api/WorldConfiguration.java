@@ -1,5 +1,6 @@
 package codecrafter47.multiworld.api;
 
+import joebkt.GameMode;
 import lombok.Data;
 
 /**
@@ -13,4 +14,5 @@ public class WorldConfiguration {
 	String worldGeneratorOptions = "";
 	boolean loadOnStartup = true;
 	boolean keepSpawnInMemory = true;
+	GameMode gameMode = GameMode.SURVIVAL;
 }
