@@ -74,7 +74,7 @@ public abstract class CustomWorldLoading {
 
 		this.worldServers = new WorldServer[3];
 		boolean localIsServerHardcore = this.getServerIsHardcore();
-		this.tick100PerWorld = new long[3][1000];
+		this.tick100PerWorld = new long[3][100];
 
 		IDataManager dataManager = this.m_worldStorageInterface.createNewWorldStorage(var1, true);
 		this.setResourcePackInResourcesZip(this.getOverworldName(), dataManager);
