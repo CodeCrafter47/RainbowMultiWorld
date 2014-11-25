@@ -282,7 +282,7 @@ public class MainCommand implements MC_Command {
 				(configuration.isSpawnAnimals() ? "&a" : "&7") + "[allowAnimals](/MultiWorld modify " + id + " allowAnimals) " +
 				(configuration.isSpawnMonsters() ? "&a" : "&7") + "[allowMonsters](/MultiWorld modify " + id + " allowMonsters) " +
 				(worldRegistration.settings.generateStructures ? "&a" : "&7") + "[generateStructures](/MultiWorld modify " + id + " generateStructures) " +
-				(configuration.isKeepSpawnInMemory() ? "&a" : "&7") + "[keepSpawnInMemory](/MultiWorld modify " + id + " keepSpawnInMemory) " +
+//				(configuration.isKeepSpawnInMemory() ? "&a" : "&7") + "[keepSpawnInMemory](/MultiWorld modify " + id + " keepSpawnInMemory) " +
 				(configuration.isLoadOnStartup() ? "&a" : "&7") + "[loadOnStartup](/MultiWorld modify " + id + " loadOnStartup) " +
 				""));
 	}
