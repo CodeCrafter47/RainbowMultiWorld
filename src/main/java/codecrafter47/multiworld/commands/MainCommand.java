@@ -150,7 +150,9 @@ public class MainCommand implements MC_Command {
 		// show help
 		player.sendMessage(ChatUtil.parseString(
 				"&6What do you want to do?\n" +
-						"&b[create a world][/MultiWorld create ] &e| &b[manage worlds](/MultiWorld list)"));
+						"&b[create a world][/MultiWorld create ]{&6click to add a world.\n"
+						+ "You just need to enter the name\n"
+						+ "everything else will be configured later} &e| &b[manage worlds](/MultiWorld list)"));
 	}
 
 	@Override public boolean hasPermissionToUse(MC_Player player) {
@@ -163,7 +165,7 @@ public class MainCommand implements MC_Command {
 
 	public void showWorldList(ChatPlayer player) {
 		player.sendMessage(ChatUtil.parseString(
-				"&6Worlds:                       *[(add world)][/MultiWorld create ]"
+				"&6Worlds:                       *[(add world)][/MultiWorld create ]{&6click to add a world.\nYou just need to enter the name\neverything else will be configured later}"
 		));
 		for (int id : plugin.getWorldManager().getWorlds()) {
 			player.sendMessage(ChatUtil.parseString(
@@ -176,7 +178,7 @@ public class MainCommand implements MC_Command {
 		WorldManager worldManager = plugin.getWorldManager();
 		// HEADER
 		if (worldManager.isLoaded(id)) {
-			player.sendMessage(ChatUtil.parseString("\n&6 > World: &a\"" + worldManager.getName(id) + "\" - Loaded"));
+			player.sendMessage(ChatUtil.parseString("\n&6 > World: &a\"" + worldManager.getName(id) + "\" - Loaded" + "   &b *[(goto)](/diw dimen " + id + "){teleport there}"));
 		}
 		else {
 			player.sendMessage(ChatUtil.parseString("\n&6 > World: &7\"" + worldManager.getName(id) + "\" &6-&b *[(load)](/MultiWorld load " + id + ")"));
@@ -231,7 +233,7 @@ public class MainCommand implements MC_Command {
 			player.sendMessage(ChatUtil.parseString("&6GeneratorOptions: \"" + configuration.getWorldGeneratorOptions() + "\" *&e[(edit)][/MultiWorld modify " + id + " generatorOptions " + configuration.getWorldGeneratorOptions() + " ]"));
 		}
 		// SEED
-		player.sendMessage(ChatUtil.parseString("&6Seed: [&f" + worldRegistration.settings.seed + "][/MultiWorld modify " + id + " seed " + worldRegistration.settings.seed + "]{&6change seed}"));
+		player.sendMessage(ChatUtil.parseString("&6Seed: [&f" + worldRegistration.settings.seed + "][/MultiWorld modify " + id + " seed " + worldRegistration.settings.seed + "]{&6change seed\nyou need to enter a number}"));
 		// GAMEMODE
 		options = "";
 		for (GameMode type : GameMode.values()) {
