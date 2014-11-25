@@ -5,6 +5,7 @@
         "FixBiomeGenerator",
         "FixChunkProvider",
         "ImplementChatAPI",
+        "AddWorldTypeSpecificReturnValues",
         "InjectEnvironment"
     ]
 }

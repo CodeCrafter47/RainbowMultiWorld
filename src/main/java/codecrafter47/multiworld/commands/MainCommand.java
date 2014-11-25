@@ -189,7 +189,7 @@ public class MainCommand implements MC_Command {
 			player.sendMessage(ChatUtil.parseString("\n&6 > World: &7\"" + worldManager.getName(id) + "\" &6-&b *[(load)](/MultiWorld load " + id + ")"));
 		}
 		WorldConfiguration configuration = plugin.getStorageManager().getCustomConfig(id);
-		// GENERATION TYPE
+		// WORLD TYPE
 		String options = "";
 		for (GenerationType type : GenerationType.values()) {
 			if (type == configuration.getGenerationType()) {
@@ -199,7 +199,7 @@ public class MainCommand implements MC_Command {
 				options += "&r&7[" + type.name() + "](/MultiWorld modify " + id + " generationType " + type.name() + ") ";
 			}
 		}
-		player.sendMessage(ChatUtil.parseString("&6Generator: " + options));
+		player.sendMessage(ChatUtil.parseString("&6World Type: " + options));
 		// LEVEL TYPE
 		_WorldRegistration worldRegistration = _WorldMaster.GetRegistrationFromDimension(id);
 		if (configuration.getGenerationType() != GenerationType.NETHER && configuration.getGenerationType() != GenerationType.END) {
@@ -240,16 +240,18 @@ public class MainCommand implements MC_Command {
 		// SEED
 		player.sendMessage(ChatUtil.parseString("&6Seed: [&f" + worldRegistration.settings.seed + "][/MultiWorld modify " + id + " seed " + worldRegistration.settings.seed + "]{&6change seed\nyou need to enter a number}"));
 		// ENVIRONMENT
-		options = "";
-		for (Environment type : Environment.values()) {
-			if (type == configuration.getEnvironment()) {
-				options += "&a&l" + type.name() + " ";
+		if(configuration.getGenerationType() == GenerationType.SINGLE_BIOME || configuration.getGenerationType() == GenerationType.OVERWORLD) {
+			options = "";
+			for (Environment type : Environment.values()) {
+				if (type == configuration.getEnvironment()) {
+					options += "&a&l" + type.name() + " ";
+				}
+				else {
+					options += "&r&7[" + type.name() + "](/MultiWorld modify " + id + " environment " + type.name() + ") ";
+				}
 			}
-			else {
-				options += "&r&7[" + type.name() + "](/MultiWorld modify " + id + " environment " + type.name() + ") ";
-			}
+			player.sendMessage(ChatUtil.parseString("[&6Environment:]{&6environment describes how the sky looks} " + options));
 		}
-		player.sendMessage(ChatUtil.parseString("[&6Environment:]{&6environment describes how the sky looks} " + options));
 		// GAMEMODE
 		options = "";
 		for (GameMode type : GameMode.values()) {
