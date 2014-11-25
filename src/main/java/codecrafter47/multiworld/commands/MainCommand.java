@@ -7,10 +7,10 @@ import codecrafter47.multiworld.api.GenerationType;
 import codecrafter47.multiworld.api.WorldConfiguration;
 import codecrafter47.multiworld.manager.WorldManager;
 import codecrafter47.multiworld.util.ChatUtil;
+import joebkt.Difficulty;
 import joebkt.GameMode;
 import joebkt._WorldMaster;
 import joebkt._WorldRegistration;
-import org.omg.CORBA.UNKNOWN;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,6 +104,10 @@ public class MainCommand implements MC_Command {
 				configuration.setGameMode(GameMode.valueOf(value));
 				plugin.getStorageManager().saveData();
 				break;
+			case "difficulty":
+				configuration.setDifficulty(Difficulty.valueOf(value));
+				plugin.getStorageManager().saveData();
+				break;
 			case "seed":
 				worldRegistration.settings.seed = Long.valueOf(value);
 				_WorldMaster.SaveData();
@@ -170,6 +174,7 @@ public class MainCommand implements MC_Command {
 
 	public void showWorldDetails(ChatPlayer player, int id) {
 		WorldManager worldManager = plugin.getWorldManager();
+		// HEADER
 		if (worldManager.isLoaded(id)) {
 			player.sendMessage(ChatUtil.parseString("\n&6 > World: &a\"" + worldManager.getName(id) + "\" - Loaded"));
 		}
@@ -177,6 +182,7 @@ public class MainCommand implements MC_Command {
 			player.sendMessage(ChatUtil.parseString("\n&6 > World: &7\"" + worldManager.getName(id) + "\" &6-&b *[(load)](/MultiWorld load " + id + ")"));
 		}
 		WorldConfiguration configuration = plugin.getStorageManager().getCustomConfig(id);
+		// GENERATION TYPE
 		String options = "";
 		for (GenerationType type : GenerationType.values()) {
 			if (type == configuration.getGenerationType()) {
@@ -187,6 +193,7 @@ public class MainCommand implements MC_Command {
 			}
 		}
 		player.sendMessage(ChatUtil.parseString("&6Generator: " + options));
+		// LEVEL TYPE
 		_WorldRegistration worldRegistration = _WorldMaster.GetRegistrationFromDimension(id);
 		if (configuration.getGenerationType() != GenerationType.NETHER && configuration.getGenerationType() != GenerationType.END) {
 			options = "";
@@ -203,6 +210,7 @@ public class MainCommand implements MC_Command {
 			}
 			player.sendMessage(ChatUtil.parseString("&6LevelType: " + options));
 		}
+		// BIOME TYPE
 		if (configuration.getGenerationType() == GenerationType.SINGLE_BIOME) {
 			options = "";
 			for (MC_WorldBiomeType type : MC_WorldBiomeType.values()) {
@@ -218,10 +226,13 @@ public class MainCommand implements MC_Command {
 			}
 			player.sendMessage(ChatUtil.parseString("&6BiomeType: " + options));
 		}
+		// GENERATOR OPTIONS
 		if (configuration.getGenerationType() != GenerationType.NETHER && configuration.getGenerationType() != GenerationType.END && worldRegistration.settings.levelType == MC_WorldLevelType.FLAT) {
 			player.sendMessage(ChatUtil.parseString("&6GeneratorOptions: \"" + configuration.getWorldGeneratorOptions() + "\" *&e[(edit)][/MultiWorld modify " + id + " generatorOptions " + configuration.getWorldGeneratorOptions() + " ]"));
 		}
+		// SEED
 		player.sendMessage(ChatUtil.parseString("&6Seed: [&f" + worldRegistration.settings.seed + "][/MultiWorld modify " + id + " seed " + worldRegistration.settings.seed + "]{&6change seed}"));
+		// GAMEMODE
 		options = "";
 		for (GameMode type : GameMode.values()) {
 			if (type == GameMode.NOT_SET) {
@@ -234,7 +245,19 @@ public class MainCommand implements MC_Command {
 				options += "&r&7[" + type.name() + "](/MultiWorld modify " + id + " gamemode " + type.name() + ") ";
 			}
 		}
-		player.sendMessage(ChatUtil.parseString("&6BiomeType: " + options));
+		player.sendMessage(ChatUtil.parseString("&6Gamemode: " + options));
+		// DIFFICULTY
+		options = "";
+		for (Difficulty type : Difficulty.values()) {
+			if (type == configuration.getDifficulty()) {
+				options += "&a&l" + type.name() + " ";
+			}
+			else {
+				options += "&r&7[" + type.name() + "](/MultiWorld modify " + id + " difficulty " + type.name() + ") ";
+			}
+		}
+		player.sendMessage(ChatUtil.parseString("&6Difficulty: " + options));
+		// FLAGS
 		player.sendMessage(ChatUtil.parseString("&6Flags: " +
 				(configuration.isSpawnAnimals() ? "&a" : "&7") + "[allowAnimals](/MultiWorld modify " + id + " allowAnimals) " +
 				(configuration.isSpawnMonsters() ? "&a" : "&7") + "[allowMonsters](/MultiWorld modify " + id + " allowMonsters) " +

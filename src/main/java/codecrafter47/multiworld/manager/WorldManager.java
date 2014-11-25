@@ -61,7 +61,7 @@ public class WorldManager {
 
 		worldData.setSpawnCoordinates(customSpawn);
 		worldData.setLevelType(tgtLevelType);
-		worldData.setDifficulty(Difficulty.PEACEFUL);
+		worldData.setDifficulty(configuration.getDifficulty());
 		worldData.setGenStructures(entry.settings.generateStructures);
 		worldData.dimensionIdx = dimenForWorld = server.worldServers.length;
 

@@ -1,5 +1,6 @@
 package codecrafter47.multiworld.api;
 
+import joebkt.Difficulty;
 import joebkt.GameMode;
 import lombok.Data;
 
@@ -15,4 +16,5 @@ public class WorldConfiguration {
 	boolean loadOnStartup = true;
 	boolean keepSpawnInMemory = true;
 	GameMode gameMode = GameMode.SURVIVAL;
+	Difficulty difficulty = Difficulty.NORMAL;
 }
