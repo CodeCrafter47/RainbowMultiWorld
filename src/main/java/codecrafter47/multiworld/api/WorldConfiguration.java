@@ -2,6 +2,7 @@ package codecrafter47.multiworld.api;
 
 import joebkt.Difficulty;
 import joebkt.GameMode;
+import joebkt.IntegerCoordinates;
 import lombok.Data;
 
 /**
@@ -18,4 +19,5 @@ public class WorldConfiguration {
 	GameMode gameMode = GameMode.SURVIVAL;
 	Difficulty difficulty = Difficulty.NORMAL;
 	Environment environment = Environment.OVERWORLD;
+	IntegerCoordinates spawn = new IntegerCoordinates(0, 100, 0);
 }

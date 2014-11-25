@@ -8,10 +8,7 @@ import codecrafter47.multiworld.api.GenerationType;
 import codecrafter47.multiworld.api.WorldConfiguration;
 import codecrafter47.multiworld.manager.WorldManager;
 import codecrafter47.multiworld.util.ChatUtil;
-import joebkt.Difficulty;
-import joebkt.GameMode;
-import joebkt._WorldMaster;
-import joebkt._WorldRegistration;
+import joebkt.*;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.ArrayList;
@@ -43,6 +40,8 @@ public class MainCommand implements MC_Command {
 	@Override public void handleCommand(MC_Player player, String[] strings) {
 		if (strings.length == 0) {
 			showHelp((ChatPlayer) player);
+		} else if (strings[0].equals("tp") && strings.length == 2){
+			player.teleport(plugin.getServer().getWorld(Integer.valueOf(strings[1])).getSpawnLocation());
 		}
 		else if (strings[0].equals("create") && strings.length > 1) {
 			String name = strings[1];
@@ -69,7 +68,7 @@ public class MainCommand implements MC_Command {
 		}
 		else if (strings[0].equals("modify") && strings.length == 3) {
 			int id = Integer.valueOf(strings[1]);
-			toggleFlag(id, strings[2]);
+			toggleFlag(player, id, strings[2]);
 			showWorldDetails((ChatPlayer) player, id);
 		}
 		else if (strings[0].equals("modify") && strings.length == 4) {
@@ -85,7 +84,7 @@ public class MainCommand implements MC_Command {
 	private void setFlag(int id, String flag, String value) {
 		WorldConfiguration configuration = plugin.getStorageManager().getCustomConfig(id);
 		_WorldRegistration worldRegistration = _WorldMaster.GetRegistrationFromDimension(id);
-		switch (flag){
+		switch (flag) {
 			case "generationType":
 				configuration.setGenerationType(GenerationType.valueOf(value));
 				plugin.getStorageManager().saveData();
@@ -125,10 +124,10 @@ public class MainCommand implements MC_Command {
 		}
 	}
 
-	private void toggleFlag(int id, String string) {
+	private void toggleFlag(MC_Player player, int id, String string) {
 		WorldConfiguration configuration = plugin.getStorageManager().getCustomConfig(id);
 		_WorldRegistration worldRegistration = _WorldMaster.GetRegistrationFromDimension(id);
-		switch (string){
+		switch (string) {
 			case "allowAnimals":
 				configuration.setSpawnAnimals(!configuration.isSpawnAnimals());
 				plugin.getStorageManager().saveData();
@@ -150,6 +149,12 @@ public class MainCommand implements MC_Command {
 			case "loadOnStartup":
 				configuration.setLoadOnStartup(!configuration.isLoadOnStartup());
 				plugin.getStorageManager().saveData();
+				break;
+			case "spawn":
+				configuration.setSpawn(new IntegerCoordinates(player.getLocation().getBlockX(),
+						player.getLocation().getBlockY(), player.getLocation().getBlockZ()));
+				plugin.getStorageManager().saveData();
+				MinecraftServer.getServer().getWorldServerByDimension(id).setWorldSpawn(configuration.getSpawn());
 				break;
 			default:
 				plugin.getLogger().warn("player tried to toggle invalid flag: " + string);
@@ -179,7 +184,7 @@ public class MainCommand implements MC_Command {
 		));
 		for (int id : plugin.getWorldManager().getWorlds()) {
 			player.sendMessage(ChatUtil.parseString(
-					"    [" + (plugin.getWorldManager().isLoaded(id) ? "&a" : "&7") + plugin.getWorldManager().getName(id) + "](/MultiWorld modify " + id + "){&6click here to change world specific settings}" + (plugin.getWorldManager().isLoaded(id)?"   &b *[(goto)](/diw dimen " + id + "){teleport there}":"")
+					"    [" + (plugin.getWorldManager().isLoaded(id) ? "&a" : "&7") + plugin.getWorldManager().getName(id) + "](/MultiWorld modify " + id + "){&6click here to change world specific settings}" + (plugin.getWorldManager().isLoaded(id) ? "   &b *[(goto)](/MultiWorld tp " + id + "){teleport there}" : "")
 			));
 		}
 	}
@@ -188,7 +193,7 @@ public class MainCommand implements MC_Command {
 		WorldManager worldManager = plugin.getWorldManager();
 		// HEADER
 		if (worldManager.isLoaded(id)) {
-			player.sendMessage(ChatUtil.parseString("\n&6 > World: &a\"" + worldManager.getName(id) + "\" - Loaded" + "   &b *[(goto)](/diw dimen " + id + "){teleport there}"));
+			player.sendMessage(ChatUtil.parseString("\n&6 > World: &a\"" + worldManager.getName(id) + "\" - Loaded" + "   &b *[(goto)](/MultiWorld tp " + id + "){teleport there}"));
 		}
 		else {
 			player.sendMessage(ChatUtil.parseString("\n&6 > World: &7\"" + worldManager.getName(id) + "\" &6-&b *[(load)](/MultiWorld load " + id + ")"));
@@ -245,7 +250,7 @@ public class MainCommand implements MC_Command {
 		// SEED
 		player.sendMessage(ChatUtil.parseString("&6Seed: [&f" + worldRegistration.settings.seed + "][/MultiWorld modify " + id + " seed " + worldRegistration.settings.seed + "]{&6change seed\nyou need to enter a number}"));
 		// ENVIRONMENT
-		if(configuration.getGenerationType() == GenerationType.SINGLE_BIOME || configuration.getGenerationType() == GenerationType.OVERWORLD) {
+		if (configuration.getGenerationType() == GenerationType.SINGLE_BIOME || configuration.getGenerationType() == GenerationType.OVERWORLD) {
 			options = "";
 			for (Environment type : Environment.values()) {
 				if (type == configuration.getEnvironment()) {
@@ -282,12 +287,17 @@ public class MainCommand implements MC_Command {
 			}
 		}
 		player.sendMessage(ChatUtil.parseString("&6Difficulty: " + options));
+		// SPAWN
+		player.sendMessage(ChatUtil.parseString("&6Spawn: " + configuration.getSpawn().getX()
+				+ "," + configuration.getSpawn().getY() + "," + configuration.getSpawn().getZ()
+				+ (((((MC_Player) player).getWorld().getDimension() == id)) ?
+				("    *[(set to current position)](/MultiWorld modify " + id + " spawn)") : "")));
 		// FLAGS
 		player.sendMessage(ChatUtil.parseString("&6Flags: " +
 				(configuration.isSpawnAnimals() ? "&a" : "&7") + "[allowAnimals](/MultiWorld modify " + id + " allowAnimals) " +
 				(configuration.isSpawnMonsters() ? "&a" : "&7") + "[allowMonsters](/MultiWorld modify " + id + " allowMonsters) " +
 				(worldRegistration.settings.generateStructures ? "&a" : "&7") + "[generateStructures](/MultiWorld modify " + id + " generateStructures) " +
-//				(configuration.isKeepSpawnInMemory() ? "&a" : "&7") + "[keepSpawnInMemory](/MultiWorld modify " + id + " keepSpawnInMemory) " +
+				//				(configuration.isKeepSpawnInMemory() ? "&a" : "&7") + "[keepSpawnInMemory](/MultiWorld modify " + id + " keepSpawnInMemory) " +
 				(configuration.isLoadOnStartup() ? "&a" : "&7") + "[loadOnStartup](/MultiWorld modify " + id + " loadOnStartup) " +
 				""));
 	}

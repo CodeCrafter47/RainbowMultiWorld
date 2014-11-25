@@ -54,12 +54,7 @@ public class WorldManager {
 			worldData.setWorldSettings(ws);
 		}
 
-		IntegerCoordinates customSpawn = new IntegerCoordinates(0, 100, 0);
-		if (tgtLevelType == LevelType.flat) {
-			customSpawn = new IntegerCoordinates(0, 6, 0);
-		}
-
-		worldData.setSpawnCoordinates(customSpawn);
+		worldData.setSpawnCoordinates(configuration.getSpawn());
 		worldData.setLevelType(tgtLevelType);
 		worldData.setDifficulty(configuration.getDifficulty());
 		worldData.setGenStructures(entry.settings.generateStructures);
