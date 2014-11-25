@@ -82,9 +82,11 @@ public class MainCommand implements MC_Command {
 				break;
 			case "levelType":
 				worldRegistration.settings.levelType = MC_WorldLevelType.valueOf(value);
+				_WorldMaster.SaveData();
 				break;
 			case "biomeType":
 				worldRegistration.settings.biomeType = MC_WorldBiomeType.valueOf(value);
+				_WorldMaster.SaveData();
 				break;
 			case "generatorOptions":
 				configuration.setWorldGeneratorOptions(value);
@@ -97,6 +99,7 @@ public class MainCommand implements MC_Command {
 
 	private void toggleFlag(int id, String string) {
 		WorldConfiguration configuration = plugin.getStorageManager().getCustomConfig(id);
+		_WorldRegistration worldRegistration = _WorldMaster.GetRegistrationFromDimension(id);
 		switch (string){
 			case "allowAnimals":
 				configuration.setSpawnAnimals(!configuration.isSpawnAnimals());
@@ -105,6 +108,10 @@ public class MainCommand implements MC_Command {
 			case "allowMonsters":
 				configuration.setSpawnMonsters(!configuration.isSpawnMonsters());
 				plugin.getStorageManager().saveData();
+				break;
+			case "generateStructures":
+				worldRegistration.settings.generateStructures = !worldRegistration.settings.generateStructures;
+				_WorldMaster.SaveData();
 				break;
 			case "keepSpawnInMemory":
 				configuration.setKeepSpawnInMemory(!configuration.isKeepSpawnInMemory());
@@ -200,9 +207,10 @@ public class MainCommand implements MC_Command {
 		}
 		player.sendMessage(ChatUtil.parseString("&6Flags: " +
 				(configuration.isSpawnAnimals() ? "&a" : "&7") + "[allowAnimals](/MultiWorld modify " + id + " allowAnimals) " +
-				(configuration.isSpawnAnimals() ? "&a" : "&7") + "[allowMonsters](/MultiWorld modify " + id + " allowMonsters) " +
-				(configuration.isSpawnAnimals() ? "&a" : "&7") + "[keepSpawnInMemory](/MultiWorld modify " + id + " keepSpawnInMemory) " +
-				(configuration.isSpawnAnimals() ? "&a" : "&7") + "[loadOnStartup](/MultiWorld modify " + id + " loadOnStartup) " +
+				(configuration.isSpawnMonsters() ? "&a" : "&7") + "[allowMonsters](/MultiWorld modify " + id + " allowMonsters) " +
+				(worldRegistration.settings.generateStructures ? "&a" : "&7") + "[generateStructures](/MultiWorld modify " + id + " generateStructures) " +
+				(configuration.isKeepSpawnInMemory() ? "&a" : "&7") + "[keepSpawnInMemory](/MultiWorld modify " + id + " keepSpawnInMemory) " +
+				(configuration.isLoadOnStartup() ? "&a" : "&7") + "[loadOnStartup](/MultiWorld modify " + id + " loadOnStartup) " +
 				""));
 	}
 }
