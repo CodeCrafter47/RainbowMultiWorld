@@ -41,10 +41,19 @@ public class MainCommand implements MC_Command {
 		if (strings.length == 0) {
 			showHelp((ChatPlayer) player);
 		} else if (strings[0].equals("tp") && strings.length == 2){
-			player.teleport(plugin.getServer().getWorld(Integer.valueOf(strings[1])).getSpawnLocation());
+			Integer id = Integer.valueOf(strings[1]);
+			if(plugin.getWorldManager().isLoaded(id)) {
+				player.teleport(plugin.getServer().getWorld(id).getSpawnLocation());
+			} else {
+				((ChatPlayer)player).sendMessage(ChatUtil.parseString("&cWorld " + plugin.getWorldManager().getName(id) + " is not loaded! *&b[(load now)](/MultiWorld load " + id + ")"));
+			}
 		}
 		else if (strings[0].equals("create") && strings.length > 1) {
 			String name = strings[1];
+			if(_WorldMaster.mapDimensionToWorldName.values().contains(name)){
+				((ChatPlayer)player).sendMessage(ChatUtil.parseString("&cWorld " + name + " already exists"));
+				return;
+			}
 			MC_WorldSettings mc_worldSettings = new MC_WorldSettings();
 			mc_worldSettings.generateStructures = true;
 			mc_worldSettings.seed = System.currentTimeMillis();
@@ -104,12 +113,14 @@ public class MainCommand implements MC_Command {
 			case "gamemode":
 				configuration.setGameMode(GameMode.valueOf(value));
 				plugin.getStorageManager().saveData();
-				MinecraftServer.getServer().getWorldServerByDimension(id).getWorldData().setGameMode(configuration.getGameMode());
+				if(plugin.getWorldManager().isLoaded(id))
+					MinecraftServer.getServer().getWorldServerByDimension(id).getWorldData().setGameMode(configuration.getGameMode());
 				break;
 			case "difficulty":
 				configuration.setDifficulty(Difficulty.valueOf(value));
 				plugin.getStorageManager().saveData();
-				MinecraftServer.getServer().getWorldServerByDimension(id).getWorldData().setDifficulty(configuration.getDifficulty());
+				if(plugin.getWorldManager().isLoaded(id))
+					MinecraftServer.getServer().getWorldServerByDimension(id).getWorldData().setDifficulty(configuration.getDifficulty());
 				break;
 			case "environment":
 				configuration.setEnvironment(Environment.valueOf(value));
@@ -131,12 +142,14 @@ public class MainCommand implements MC_Command {
 			case "allowAnimals":
 				configuration.setSpawnAnimals(!configuration.isSpawnAnimals());
 				plugin.getStorageManager().saveData();
-				MinecraftServer.getServer().getWorldServerByDimension(id).setTwoBools(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
+				if(plugin.getWorldManager().isLoaded(id))
+					MinecraftServer.getServer().getWorldServerByDimension(id).setTwoBools(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
 				break;
 			case "allowMonsters":
 				configuration.setSpawnMonsters(!configuration.isSpawnMonsters());
 				plugin.getStorageManager().saveData();
-				MinecraftServer.getServer().getWorldServerByDimension(id).setTwoBools(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
+				if(plugin.getWorldManager().isLoaded(id))
+					MinecraftServer.getServer().getWorldServerByDimension(id).setTwoBools(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
 				break;
 			case "generateStructures":
 				worldRegistration.settings.generateStructures = !worldRegistration.settings.generateStructures;
@@ -154,7 +167,8 @@ public class MainCommand implements MC_Command {
 				configuration.setSpawn(new IntegerCoordinates(player.getLocation().getBlockX(),
 						player.getLocation().getBlockY(), player.getLocation().getBlockZ()));
 				plugin.getStorageManager().saveData();
-				MinecraftServer.getServer().getWorldServerByDimension(id).setWorldSpawn(configuration.getSpawn());
+				if(plugin.getWorldManager().isLoaded(id))
+					MinecraftServer.getServer().getWorldServerByDimension(id).setWorldSpawn(configuration.getSpawn());
 				break;
 			default:
 				plugin.getLogger().warn("player tried to toggle invalid flag: " + string);
@@ -166,8 +180,8 @@ public class MainCommand implements MC_Command {
 		player.sendMessage(ChatUtil.parseString(
 				"&6What do you want to do?\n" +
 						"&b[create a world][/MultiWorld create ]{&6click to add a world.\n"
-						+ "You just need to enter the name\n"
-						+ "everything else will be configured later} &e| &b[manage worlds](/MultiWorld list)"));
+						+ "&6You just need to enter the name\n"
+						+ "&6everything else will be configured later} &e| &b[manage worlds](/MultiWorld list)"));
 	}
 
 	@Override public boolean hasPermissionToUse(MC_Player player) {
@@ -180,11 +194,11 @@ public class MainCommand implements MC_Command {
 
 	public void showWorldList(ChatPlayer player) {
 		player.sendMessage(ChatUtil.parseString(
-				"&6Worlds:                       *[(add world)][/MultiWorld create ]{&6click to add a world.\nYou just need to enter the name\neverything else will be configured later}"
+				"&6Worlds:                       *[(add world)][/MultiWorld create ]{&6click to add a world.\n&6You just need to enter the name\n&6everything else will be configured later}"
 		));
 		for (int id : plugin.getWorldManager().getWorlds()) {
 			player.sendMessage(ChatUtil.parseString(
-					"    [" + (plugin.getWorldManager().isLoaded(id) ? "&a" : "&7") + plugin.getWorldManager().getName(id) + "](/MultiWorld modify " + id + "){&6click here to change world specific settings}" + (plugin.getWorldManager().isLoaded(id) ? "   &b *[(goto)](/MultiWorld tp " + id + "){teleport there}" : "")
+					"    [" + (plugin.getWorldManager().isLoaded(id) ? "&a" : "&7") + plugin.getWorldManager().getName(id) + "](/MultiWorld modify " + id + "){&6click here to change world specific settings}" + (plugin.getWorldManager().isLoaded(id) ? "   &b *[(goto)](/MultiWorld tp " + id + "){teleport there}" : "   &b *[(load)](/MultiWorld load " + id + ")")
 			));
 		}
 	}
