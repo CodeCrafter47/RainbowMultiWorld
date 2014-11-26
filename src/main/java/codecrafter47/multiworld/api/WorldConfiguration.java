@@ -20,4 +20,5 @@ public class WorldConfiguration {
 	Difficulty difficulty = Difficulty.NORMAL;
 	Environment environment = Environment.OVERWORLD;
 	IntegerCoordinates spawn = new IntegerCoordinates(0, 100, 0);
+	int respawnWorld = 0;
 }

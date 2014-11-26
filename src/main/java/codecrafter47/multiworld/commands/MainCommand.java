@@ -130,6 +130,10 @@ public class MainCommand implements MC_Command {
 				worldRegistration.settings.seed = Long.valueOf(value);
 				_WorldMaster.SaveData();
 				break;
+			case "respawnWorld":
+				configuration.setRespawnWorld(Integer.valueOf(value));
+				plugin.getStorageManager().saveData();
+				break;
 			default:
 				plugin.getLogger().warn("player tried to set invalid flag: " + flag + "=" + value);
 		}
@@ -314,5 +318,16 @@ public class MainCommand implements MC_Command {
 				//				(configuration.isKeepSpawnInMemory() ? "&a" : "&7") + "[keepSpawnInMemory](/MultiWorld modify " + id + " keepSpawnInMemory) " +
 				(configuration.isLoadOnStartup() ? "&a" : "&7") + "[loadOnStartup](/MultiWorld modify " + id + " loadOnStartup) " +
 				""));
+		// RESPAWN WORLD
+		options = "";
+		for (MC_World world: plugin.getServer().getWorlds()) {
+			if (world.getDimension() == configuration.getRespawnWorld()) {
+				options += "&a&l" + world.getName() + " ";
+			}
+			else {
+				options += "&r&7[" + world.getName() + "](/MultiWorld modify " + id + " respawnWorld " + world.getDimension() + ") ";
+			}
+		}
+		player.sendMessage(ChatUtil.parseString("&6Respawn world: " + options));
 	}
 }

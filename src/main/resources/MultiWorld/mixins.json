@@ -6,6 +6,7 @@
         "FixChunkProvider",
         "ImplementChatAPI",
         "AddWorldTypeSpecificReturnValues",
+        "MixinRespawnWorld",
         "InjectEnvironment"
     ]
 }
