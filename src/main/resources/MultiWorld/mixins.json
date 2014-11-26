@@ -7,6 +7,9 @@
         "ImplementChatAPI",
         "AddWorldTypeSpecificReturnValues",
         "MixinRespawnWorld",
-        "InjectEnvironment"
+        "InjectEnvironment",
+        "LinkNetherPortals",
+        "AllowPortalCreationInCustomWorlds",
+        "FixCustomWorldNetherSpawnPosition"
     ]
 }

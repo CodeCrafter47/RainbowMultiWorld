@@ -133,6 +133,9 @@ public class MainCommand implements MC_Command {
 			case "respawnWorld":
 				configuration.setRespawnWorld(Integer.valueOf(value));
 				plugin.getStorageManager().saveData();
+			case "netherPortalTarget":
+				configuration.setNetherPortalTarget(Integer.valueOf(value));
+				plugin.getStorageManager().saveData();
 				break;
 			default:
 				plugin.getLogger().warn("player tried to set invalid flag: " + flag + "=" + value);
@@ -329,5 +332,27 @@ public class MainCommand implements MC_Command {
 			}
 		}
 		player.sendMessage(ChatUtil.parseString("&6Respawn world: " + options));
+		// NETHER PORTAL TARGET
+		if(configuration.getGenerationType() != GenerationType.SINGLE_BIOME && configuration.getGenerationType() != GenerationType.END) {
+			options = "";
+			if (-2 == configuration.getNetherPortalTarget()) {
+				options += "&a&lNONE ";
+			}
+			else {
+				options += "&r&7[NONE](/MultiWorld modify " + id + " netherPortalTarget -2) ";
+			}
+			for (MC_World world : plugin.getServer().getWorlds()) {
+				if(world.getDimension() <= 2)continue;
+				if(configuration.getGenerationType() == GenerationType.OVERWORLD && plugin.getStorageManager().getCustomConfig(world.getDimension()).getGenerationType() != GenerationType.NETHER)continue;
+				if(configuration.getGenerationType() == GenerationType.NETHER && plugin.getStorageManager().getCustomConfig(world.getDimension()).getGenerationType() != GenerationType.OVERWORLD)continue;
+				if (world.getDimension() == configuration.getNetherPortalTarget()) {
+					options += "&a&l" + world.getName() + " ";
+				}
+				else {
+					options += "&r&7[" + world.getName() + "](/MultiWorld modify " + id + " netherPortalTarget " + world.getDimension() + ") ";
+				}
+			}
+			player.sendMessage(ChatUtil.parseString("&6Nether portal target world: " + options));
+		}
 	}
 }
