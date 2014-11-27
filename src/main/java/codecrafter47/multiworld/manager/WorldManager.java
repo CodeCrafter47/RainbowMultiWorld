@@ -35,8 +35,7 @@ public class WorldManager {
 			return;
 		}
 		_WorldRegistration entry = _WorldMaster.GetRegistrationFromDimension(id);
-		int dimenForWorld = entry.dimension;
-		WorldConfiguration configuration = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(dimenForWorld);
+		WorldConfiguration configuration = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(id);
 		String fileWorldName = "CustomWorld_" + entry.name;
 		System.out.println(String.format("Initializing Custom World \'%s\' as dimension \'%d\' w/seed %d...", new Object[] { entry.name, Integer.valueOf(entry.dimension), Long.valueOf(entry.settings.seed) }));
 		MinecraftServer server = MinecraftServer.getServer();
@@ -58,7 +57,8 @@ public class WorldManager {
 		worldData.setLevelType(tgtLevelType);
 		worldData.setDifficulty(configuration.getDifficulty());
 		worldData.setGenStructures(entry.settings.generateStructures);
-		worldData.dimensionIdx = dimenForWorld = server.worldServers.length;
+		worldData.dimensionIdx = id;
+		int loadedIdx = server.worldServers.length;
 
 		// make worldservers array bigger
 		WorldServer[] servers = new WorldServer[server.worldServers.length + 1];
@@ -67,8 +67,8 @@ public class WorldManager {
 			servers[i] = wserver;
 		}
 		WorldServer myWorld;//  = (WorldServer) (new AlternateDimensionWorld(server, dataManager, dimenForWorld, server.worldServers[0], server.methodProfiler)).prepareWorldAndReturnObject();
-		myWorld = (WorldServer)(new WorldServer(server, dataManager, worldData, dimenForWorld, server.methodProfiler)).prepareWorldAndReturnObject();
-		servers[dimenForWorld] = myWorld;
+		myWorld = (WorldServer)(new WorldServer(server, dataManager, worldData, id, server.methodProfiler)).prepareWorldAndReturnObject();
+		servers[loadedIdx] = myWorld;
 		server.worldServers = servers;
 
 		long[][]ll = new long[server.tick100PerWorld.length + 1][];
@@ -76,20 +76,20 @@ public class WorldManager {
 			long[] longs = server.tick100PerWorld[i];
 			ll[i] = longs;
 		}
-		ll[dimenForWorld] = new long[100];
+		ll[loadedIdx] = new long[100];
 		server.tick100PerWorld = ll;
 
 		myWorld.initializeLevel(ws);
 
 		myWorld.addEntityTrackerToNotifyList(new ServerWorldEntityTracker(server, myWorld));
 
-		myWorld.dimensionSetAtCreate = dimenForWorld;
+		myWorld.dimensionSetAtCreate = id;
 
 		((PlayerList)playerList.get(server)).setWorldServerList(server.worldServers);
 
 		myWorld.setTwoBools(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
 
-		generateTerrain.invoke(server, dimenForWorld);
+		generateTerrain.invoke(server, loadedIdx);
 	}
 
 	public List<Integer> getWorlds(){
