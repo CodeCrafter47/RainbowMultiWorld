@@ -35,7 +35,7 @@
         <dependency>
             <groupId>rainbow</groupId>
             <artifactId>Rainbow</artifactId>
-            <version>49</version>
+            <version>50</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
