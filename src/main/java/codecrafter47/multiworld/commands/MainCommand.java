@@ -85,6 +85,13 @@ public class MainCommand implements MC_Command {
 			setFlag(id, strings[2], strings[3]);
 			showWorldDetails((ChatPlayer) player, id);
 		}
+		else if (strings[0].equals("gamerule") && strings.length == 4){
+			int id = Integer.valueOf(strings[1]);
+			String gamerule = strings[2];
+			String value = strings[3];
+			MinecraftServer.getServer().getWorldServerByDimension(id).getGameRules().a(gamerule, value);
+			showWorldDetails((ChatPlayer) player, id);
+		}
 		else {
 			showHelp((ChatPlayer) player);
 		}
@@ -322,6 +329,25 @@ public class MainCommand implements MC_Command {
 				//				(configuration.isKeepSpawnInMemory() ? "&a" : "&7") + "[keepSpawnInMemory](/MultiWorld modify " + id + " keepSpawnInMemory) " +
 				(configuration.isLoadOnStartup() ? "&a" : "&7") + "[loadOnStartup](/MultiWorld modify " + id + " loadOnStartup) " +
 				""));
+		// GAMERULES
+		if(plugin.getWorldManager().isLoaded(id)){
+			GameRules gameRules = MinecraftServer.getServer().getWorldServerByDimension(id).getWorldData().getGameRules();
+			options = "";
+			for(String gamerule: gameRules.b()){
+				if(gameRules.a(gamerule, EnumAnyBoolOrNumeric.BOOLEAN_VALUE)){
+					// this is a boolean rule
+					if(Boolean.valueOf(gameRules.a(gamerule))){
+						options += "&a[" + gamerule + "=true](/MultiWorld gamerule " + id + " " + gamerule + " false) ";
+					} else {
+						options += "&7[" + gamerule + "=false](/MultiWorld gamerule " + id + " " + gamerule + " true) ";
+					}
+				} else {
+					// this is free text rule
+					options += "&a[" + gamerule + "=" + gameRules.a(gamerule) + "][/MultiWorld gamerule " + id + " " + gamerule + " " + gameRules.a(gamerule) + "] ";
+				}
+			}
+		}
+		player.sendMessage(ChatUtil.parseString("&6Gamerules: " + options));
 		// RESPAWN WORLD
 		options = "";
 		for (MC_World world: plugin.getServer().getWorlds()) {
