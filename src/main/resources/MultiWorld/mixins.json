@@ -10,6 +10,7 @@
         "InjectEnvironment",
         "LinkNetherPortals",
         "AllowPortalCreationInCustomWorlds",
-        "FixCustomWorldNetherSpawnPosition"
+        "FixCustomWorldNetherSpawnPosition",
+        "FixCrossDimensionTeleport"
     ]
 }
