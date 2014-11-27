@@ -135,6 +135,7 @@ public class MainCommand implements MC_Command {
 				plugin.getStorageManager().saveData();
 			case "netherPortalTarget":
 				configuration.setNetherPortalTarget(Integer.valueOf(value));
+				plugin.getStorageManager().getCustomConfig(configuration.getNetherPortalTarget()).setNetherPortalTarget(id);
 				plugin.getStorageManager().saveData();
 				break;
 			default:
@@ -333,7 +334,7 @@ public class MainCommand implements MC_Command {
 		}
 		player.sendMessage(ChatUtil.parseString("&6Respawn world: " + options));
 		// NETHER PORTAL TARGET
-		if(configuration.getGenerationType() != GenerationType.SINGLE_BIOME && configuration.getGenerationType() != GenerationType.END) {
+		if(configuration.getGenerationType() == GenerationType.OVERWORLD) {
 			options = "";
 			if (-2 == configuration.getNetherPortalTarget()) {
 				options += "&a&lNONE ";
@@ -352,7 +353,7 @@ public class MainCommand implements MC_Command {
 					options += "&r&7[" + world.getName() + "](/MultiWorld modify " + id + " netherPortalTarget " + world.getDimension() + ") ";
 				}
 			}
-			player.sendMessage(ChatUtil.parseString("&6Nether portal target world: " + options));
+			player.sendMessage(ChatUtil.parseString("&6Nether world: " + options));
 		}
 	}
 }
