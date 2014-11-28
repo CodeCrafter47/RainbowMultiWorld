@@ -23,6 +23,7 @@ public class FixCustomWorldNetherSpawnPosition {
 		float yaw = entity.yaw;
 		fromWorld.methodProfiler.capture("moving");
 		if(entity.dimension == -1 || (entity.dimension > 2 && PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(entity.dimension).getGenerationType() == GenerationType.NETHER)) {
+			// to nether
 			xCoord = MathHelper.a(xCoord / factor, toWorld.getObjectRelatedToGrowShrink().b() + 16.0D, toWorld.getObjectRelatedToGrowShrink().d() - 16.0D);
 			zCoord = MathHelper.a(zCoord / factor, toWorld.getObjectRelatedToGrowShrink().c() + 16.0D, toWorld.getObjectRelatedToGrowShrink().e() - 16.0D);
 			entity.setPositionRotation(xCoord, entity.yCoord, zCoord, entity.yaw, entity.pitch);
@@ -30,6 +31,7 @@ public class FixCustomWorldNetherSpawnPosition {
 				fromWorld.entRelatedChunkCheck(entity, false);
 			}
 		} else if(entity.dimension != 1 || (entity.dimension > 2 && PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(entity.dimension).getGenerationType() == GenerationType.OVERWORLD)) {
+			// from nether
 			xCoord = MathHelper.a(xCoord * factor, toWorld.getObjectRelatedToGrowShrink().b() + 16.0D, toWorld.getObjectRelatedToGrowShrink().d() - 16.0D);
 			zCoord = MathHelper.a(zCoord * factor, toWorld.getObjectRelatedToGrowShrink().c() + 16.0D, toWorld.getObjectRelatedToGrowShrink().e() - 16.0D);
 			entity.setPositionRotation(xCoord, entity.yCoord, zCoord, entity.yaw, entity.pitch);
@@ -37,12 +39,8 @@ public class FixCustomWorldNetherSpawnPosition {
 				fromWorld.entRelatedChunkCheck(entity, false);
 			}
 		} else {
-			IntegerCoordinates spawnCoordinates;
-			if(dimension == 1) {
-				spawnCoordinates = toWorld.getSpawnCoords();
-			} else {
-				spawnCoordinates = toWorld.getDefaultSpawnCoordsMaybe();
-			}
+			// portal to end
+			IntegerCoordinates spawnCoordinates = toWorld.getDefaultSpawnCoordsMaybe();
 
 			if(spawnCoordinates == null) {
 				spawnCoordinates = new IntegerCoordinates(0, 65, 0);
@@ -64,10 +62,7 @@ public class FixCustomWorldNetherSpawnPosition {
 			zCoord = (double)MathHelper.restrictToRange((int)zCoord, -29999872, 29999872);
 			if(entity.isNotDead()) {
 				entity.setPositionRotation(xCoord, entity.yCoord, zCoord, entity.yaw, entity.pitch);
-				if(toWorld.worldProvider.getDimenIdx() < 1 || (toWorld.worldProvider.getDimenIdx() > 2 && PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(toWorld.worldProvider.getDimenIdx()).getGenerationType() == GenerationType.OVERWORLD) || (toWorld.worldProvider.getDimenIdx() > 2 && PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(toWorld.worldProvider.getDimenIdx()).getGenerationType() == GenerationType.NETHER)) {
-					toWorld.getPortals().constructReturnPortal(entity, yaw);
-				}
-
+				toWorld.getPortals().constructReturnPortal(entity, yaw);
 				toWorld.addEntity(entity);
 				toWorld.entRelatedChunkCheck(entity, false);
 			}
