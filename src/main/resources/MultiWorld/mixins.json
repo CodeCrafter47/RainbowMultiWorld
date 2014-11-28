@@ -1,6 +1,8 @@
 {
     "package": "codecrafter47.multiworld.mixins",
     "mixins": [
+        "FixCmdGamerule",
+        "FixCmdDifficulty",
         "CustomWorldLoading",
         "FixBiomeGenerator",
         "FixChunkProvider",
