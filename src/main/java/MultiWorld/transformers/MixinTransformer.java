@@ -88,8 +88,7 @@ public class MixinTransformer extends TreeTransformer {
 			try {
 				return this.applyMixins(transformedName, basicClass);
 			} catch (InvalidMixinException th) {
-				this.logger.warn(String.format("Class mixin failed: %s %s", th.getClass().getName(), th.getMessage()), th);
-				th.printStackTrace();
+				throw new RuntimeException(String.format("Class mixin failed: %s %s", th.getClass().getName(), th.getMessage()), th);
 			}
 		}
 		return basicClass;
