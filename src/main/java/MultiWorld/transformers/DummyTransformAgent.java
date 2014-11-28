@@ -28,6 +28,8 @@ public class DummyTransformAgent implements ClassFileTransformer {
 
 	private static Object mixinTransformer;
 
+	static boolean failure = false;
+
 	// Public static void main() but for this agent
 	@SuppressWarnings("unchecked")
 	public static void agentmain(String string, Instrumentation instrument) {
@@ -43,23 +45,21 @@ public class DummyTransformAgent implements ClassFileTransformer {
 
 			mixinTransformer = new MixinTransformer(DummyTransformAgent.class.getClassLoader().getResourceAsStream("MultiWorld/mixins.json"));
 
-			for (String s: ((MixinTransformer)mixinTransformer).getMixinTargets())
-			instrumentation.redefineClasses(
-					new ClassDefinition(
-							Class.forName(s),
-							getBaseClass(s)
-					)
-			);
+			for (String s : ((MixinTransformer) mixinTransformer).getMixinTargets()) {
+				instrumentation.redefineClasses(new ClassDefinition(Class.forName(s),getBaseClass(s)));
+				if(failure)return;
+			}
 
 			// init the real plugin
 			PluginBase plugin = (PluginBase) Class.forName("codecrafter47.multiworld.PluginMultiWorld").getDeclaredConstructors()[0].newInstance();
 			plugin.onStartup(new ServerWrapper());
-			for(PluginInfo info: _JoeUtils.plugins){
-				if(info.name.equalsIgnoreCase("MultiWorld")){
+			for (PluginInfo info : _JoeUtils.plugins) {
+				if (info.name.equalsIgnoreCase("MultiWorld")) {
 					info.ref = plugin;
 				}
 			}
-		} catch (Throwable t) {
+		}
+		catch (Throwable t) {
 			t.printStackTrace(System.out);
 		}
 	}
@@ -68,11 +68,13 @@ public class DummyTransformAgent implements ClassFileTransformer {
 	@SneakyThrows
 	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 		String realName = className.replaceAll("/", ".");
-		if(((MixinTransformer)mixinTransformer).getMixinTargets().contains(realName)){
+		if (((MixinTransformer) mixinTransformer).getMixinTargets().contains(realName)) {
 			try {
-				return ((MixinTransformer)mixinTransformer).transform(realName, realName, classfileBuffer);
-			}catch(Throwable ex){
+				return ((MixinTransformer) mixinTransformer).transform(realName, realName, classfileBuffer);
+			}
+			catch (Throwable ex) {
 				ex.printStackTrace();
+				failure = true;
 			}
 		}
 		return classfileBuffer;

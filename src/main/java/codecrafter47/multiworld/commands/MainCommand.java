@@ -145,6 +145,11 @@ public class MainCommand implements MC_Command {
 				plugin.getStorageManager().getCustomConfig(configuration.getNetherPortalTarget()).setNetherPortalTarget(id);
 				plugin.getStorageManager().saveData();
 				break;
+			case "endPortalTarget":
+				configuration.setEndPortalTarget(Integer.valueOf(value));
+				plugin.getStorageManager().getCustomConfig(configuration.getEndPortalTarget()).setEndPortalTarget(id);
+				plugin.getStorageManager().saveData();
+				break;
 			default:
 				plugin.getLogger().warn("player tried to set invalid flag: " + flag + "=" + value);
 		}
@@ -380,6 +385,27 @@ public class MainCommand implements MC_Command {
 				}
 			}
 			player.sendMessage(ChatUtil.parseString("&6Nether world: " + options));
+		}
+		// END PORTAL TARGET
+		if(configuration.getGenerationType() == GenerationType.OVERWORLD) {
+			options = "";
+			if (-2 == configuration.getEndPortalTarget()) {
+				options += "&a&lNONE ";
+			}
+			else {
+				options += "&r&7[NONE](/MultiWorld modify " + id + " endPortalTarget -2) ";
+			}
+			for (MC_World world : plugin.getServer().getWorlds()) {
+				if(world.getDimension() <= 2)continue;
+				if(plugin.getStorageManager().getCustomConfig(world.getDimension()).getGenerationType() != GenerationType.END)continue;
+				if (world.getDimension() == configuration.getEndPortalTarget()) {
+					options += "&a&l" + world.getName() + " ";
+				}
+				else {
+					options += "&r&7[" + world.getName() + "](/MultiWorld modify " + id + " endPortalTarget " + world.getDimension() + ") ";
+				}
+			}
+			player.sendMessage(ChatUtil.parseString("&6End world: " + options));
 		}
 	}
 }

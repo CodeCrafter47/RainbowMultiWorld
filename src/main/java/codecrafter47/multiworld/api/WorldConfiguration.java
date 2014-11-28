@@ -22,4 +22,5 @@ public class WorldConfiguration {
 	IntegerCoordinates spawn = new IntegerCoordinates(0, 100, 0);
 	int respawnWorld = 0;
 	int netherPortalTarget = -2;
+	int endPortalTarget = -2;
 }

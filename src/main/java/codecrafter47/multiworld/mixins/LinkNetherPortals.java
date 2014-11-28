@@ -166,11 +166,11 @@ public abstract class LinkNetherPortals {
 				this.worldEnt.methodProfiler.capture("portal");
 				int var2 = this.L();
 				if(this.fShouldPortal) {
-					PluginMultiWorld.getInstance().getLogger().info("custom portal handling");
+					//PluginMultiWorld.getInstance().getLogger().info("custom portal handling");
 					PluginMultiWorld pluginMultiWorld = PluginMultiWorld.getInstance();
 					int newDimension = pluginMultiWorld.getStorageManager().getCustomConfig(worldEnt.worldProvider.getDimenIdx()).getNetherPortalTarget();
 					if(newDimension > -2 && pluginMultiWorld.getWorldManager().isLoaded(newDimension)) {
-						PluginMultiWorld.getInstance().getLogger().info("from " + worldEnt.worldProvider.getDimenIdx() + " to " + newDimension);
+						//PluginMultiWorld.getInstance().getLogger().info("from " + worldEnt.worldProvider.getDimenIdx() + " to " + newDimension);
 						if(this.vehicle == null && this.al++ >= var2) {
 							this.al = var2;
 							this.portalCooldown = this.getPortalCooldown();
