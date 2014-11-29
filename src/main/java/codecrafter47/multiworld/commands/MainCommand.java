@@ -21,6 +21,8 @@ import java.util.List;
 public class MainCommand implements MC_Command {
 	PluginMultiWorld plugin;
 
+	boolean requiresRestart = false;
+
 	public MainCommand(PluginMultiWorld plugin) {
 		this.plugin = plugin;
 	}
@@ -95,6 +97,10 @@ public class MainCommand implements MC_Command {
 		else {
 			showHelp((ChatPlayer) player);
 		}
+		// RESTART WARNING
+		if(requiresRestart){
+			((ChatPlayer)player).sendMessage(ChatUtil.parseString("&c *\\* The server needs to be restarted in order to apply all changes."));
+		}
 	}
 
 	private void setFlag(int id, String flag, String value) {
@@ -104,18 +110,22 @@ public class MainCommand implements MC_Command {
 			case "generationType":
 				configuration.setGenerationType(GenerationType.valueOf(value));
 				plugin.getStorageManager().saveData();
+				if(plugin.getWorldManager().isLoaded(id))requiresRestart = true;
 				break;
 			case "levelType":
 				worldRegistration.settings.levelType = MC_WorldLevelType.valueOf(value);
 				_WorldMaster.SaveData();
+				if(plugin.getWorldManager().isLoaded(id))requiresRestart = true;
 				break;
 			case "biomeType":
 				worldRegistration.settings.biomeType = MC_WorldBiomeType.valueOf(value);
 				_WorldMaster.SaveData();
+				if(plugin.getWorldManager().isLoaded(id))requiresRestart = true;
 				break;
 			case "generatorOptions":
 				configuration.setWorldGeneratorOptions(value);
 				plugin.getStorageManager().saveData();
+				if(plugin.getWorldManager().isLoaded(id))requiresRestart = true;
 				break;
 			case "gamemode":
 				configuration.setGameMode(GameMode.valueOf(value));
@@ -136,6 +146,7 @@ public class MainCommand implements MC_Command {
 			case "seed":
 				worldRegistration.settings.seed = Long.valueOf(value);
 				_WorldMaster.SaveData();
+				if(plugin.getWorldManager().isLoaded(id))requiresRestart = true;
 				break;
 			case "respawnWorld":
 				configuration.setRespawnWorld(Integer.valueOf(value));
@@ -174,6 +185,7 @@ public class MainCommand implements MC_Command {
 			case "generateStructures":
 				worldRegistration.settings.generateStructures = !worldRegistration.settings.generateStructures;
 				_WorldMaster.SaveData();
+				if(plugin.getWorldManager().isLoaded(id))requiresRestart = true;
 				break;
 			case "keepSpawnInMemory":
 				configuration.setKeepSpawnInMemory(!configuration.isKeepSpawnInMemory());
