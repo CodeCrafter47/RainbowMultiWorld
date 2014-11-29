@@ -1,6 +1,7 @@
 package codecrafter47.multiworld.manager;
 
 import WrapperObjects.PluginHelper;
+import WrapperObjects.WorldWrapper;
 import codecrafter47.multiworld.PluginMultiWorld;
 import codecrafter47.multiworld.api.WorldConfiguration;
 import joebkt.*;
@@ -90,6 +91,8 @@ public class WorldManager {
 		myWorld.setTwoBools(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
 
 		generateTerrain.invoke(server, loadedIdx);
+
+		PluginMultiWorld.getInstance().getHookManager().callWorldLoadedHooks(new WorldWrapper(myWorld));
 	}
 
 	public List<Integer> getWorlds(){

@@ -4,6 +4,7 @@ import PluginReference.MC_Server;
 import PluginReference.PluginBase;
 import PluginReference.PluginInfo;
 import codecrafter47.multiworld.commands.MainCommand;
+import codecrafter47.multiworld.manager.HookManager;
 import codecrafter47.multiworld.manager.StorageManager;
 import codecrafter47.multiworld.manager.WorldManager;
 import joebkt._WorldMaster;
@@ -37,6 +38,9 @@ public class PluginMultiWorld extends PluginBase {
 	@Getter
 	private StorageManager storageManager;
 
+	@Getter
+	private HookManager hookManager = new HookManager();
+
 	@Override public void onStartup(MC_Server argServer) {
 		instance = this;
 
@@ -47,6 +51,10 @@ public class PluginMultiWorld extends PluginBase {
 
 		// register commands
 		server.registerCommand(new MainCommand(this));
+	}
+
+	@Override public void onServerFullyLoaded() {
+		getHookManager().scanForHooks(getServer());
 	}
 
 	public void onItsTimeToLoadCustomWorlds() {
