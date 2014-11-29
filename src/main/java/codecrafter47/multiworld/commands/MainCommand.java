@@ -64,6 +64,16 @@ public class MainCommand implements MC_Command {
 			plugin.getStorageManager().saveData();
 			showWorldDetails((ChatPlayer) player, id);
 		}
+		else if (strings[0].equals("remove") && strings.length == 2){
+			if(PluginMultiWorld.getInstance().getServer().unregisterWorld(_WorldMaster.GetWorldNameFromDimension(Integer.valueOf(strings[1])))){
+				((ChatPlayer)player).sendMessage(ChatUtil.parseString(
+						"&aSuccessfully unregistered " + _WorldMaster.GetWorldNameFromDimension(Integer.valueOf(strings[1])) + "."));
+				requiresRestart = true;
+			} else {
+				((ChatPlayer)player).sendMessage(ChatUtil.parseString("&cThere has been an error deleting the world."));
+			}
+			showWorldList((ChatPlayer) player);
+		}
 		else if (strings[0].equals("load") && strings.length == 2) {
 			int id = Integer.valueOf(strings[1]);
 			plugin.getWorldManager().loadWorld(id);
@@ -239,10 +249,10 @@ public class MainCommand implements MC_Command {
 		WorldManager worldManager = plugin.getWorldManager();
 		// HEADER
 		if (worldManager.isLoaded(id)) {
-			player.sendMessage(ChatUtil.parseString("\n&6 > World: &a\"" + worldManager.getName(id) + "\" - Loaded" + "   &b *[(goto)](/MultiWorld tp " + id + "){teleport there}"));
+			player.sendMessage(ChatUtil.parseString("\n&6 > World: &a\"" + worldManager.getName(id) + "\" - Loaded" + "   &b *[(goto)](/MultiWorld tp " + id + "){teleport there}" + "   &4 [(delete)](/MultiWorld remove " + id + "){&cDANGER: Removes the world}"));
 		}
 		else {
-			player.sendMessage(ChatUtil.parseString("\n&6 > World: &7\"" + worldManager.getName(id) + "\" &6-&b *[(load)](/MultiWorld load " + id + ")"));
+			player.sendMessage(ChatUtil.parseString("\n&6 > World: &7\"" + worldManager.getName(id) + "\" &6-&b *[(load)](/MultiWorld load " + id + ")" + "   &4 [(delete)](/MultiWorld remove " + id + "){&cDANGER: Removes the world}"));
 		}
 		WorldConfiguration configuration = plugin.getStorageManager().getCustomConfig(id);
 		// WORLD TYPE
@@ -354,9 +364,9 @@ public class MainCommand implements MC_Command {
 				if(gameRules.a(gamerule, EnumAnyBoolOrNumeric.BOOLEAN_VALUE)){
 					// this is a boolean rule
 					if(Boolean.valueOf(gameRules.a(gamerule))){
-						options += "&a[" + gamerule + "=true](/MultiWorld gamerule " + id + " " + gamerule + " false) ";
+						options += "&a[" + gamerule + "](/MultiWorld gamerule " + id + " " + gamerule + " false) ";
 					} else {
-						options += "&7[" + gamerule + "=false](/MultiWorld gamerule " + id + " " + gamerule + " true) ";
+						options += "&7[" + gamerule + "](/MultiWorld gamerule " + id + " " + gamerule + " true) ";
 					}
 				} else {
 					// this is free text rule
