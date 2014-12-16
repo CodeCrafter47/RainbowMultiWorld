@@ -13,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -104,12 +105,47 @@ public class MainCommand implements MC_Command {
 			MinecraftServer.getServer().getWorldServerByDimension(id).getGameRules().a(gamerule, value);
 			showWorldDetails((ChatPlayer) player, id);
 		}
+		else if(strings[0].equals("inv") && strings.length == 1){
+			showInvDetails((ChatPlayer) player);
+		}
+		else if(strings[0].equals("inv") && strings.length == 3 && strings[1].equals("addgroup")){
+			if(!plugin.getMultiInventoryManager().getGroups().contains(strings[2]))plugin.getMultiInventoryManager().addGroup(strings[2]);
+			showInvDetails((ChatPlayer) player);
+		}
+		else if(strings[0].equals("inv") && strings.length == 4 && strings[1].equals("setgroup")){
+			plugin.getMultiInventoryManager().setGroupForWorld(getWorldByName(strings[2]), strings[3]);
+			showInvDetails((ChatPlayer) player);
+		}
 		else {
 			showHelp((ChatPlayer) player);
 		}
 		// RESTART WARNING
 		if(requiresRestart){
 			((ChatPlayer)player).sendMessage(ChatUtil.parseString("&c *\\* The server needs to be restarted in order to apply all changes."));
+		}
+	}
+
+	private MC_World getWorldByName(String name){
+		for(MC_World world: plugin.getServer().getWorlds()){
+			if(world.getName().equals(name))return world;
+		}
+		throw new RuntimeException("World " + name + " does not exist!");
+	}
+
+	private void showInvDetails(ChatPlayer player) {
+		player.sendMessage(ChatUtil.parseString("&6#### Inventories ####"));
+		String groups = "";
+		for (Iterator<String> iterator = plugin.getMultiInventoryManager().getGroups().iterator(); iterator.hasNext(); ) {
+			String group = iterator.next();
+			groups += group;
+			if(iterator.hasNext())groups += ", ";
+		}
+		player.sendMessage(ChatUtil.parseString("&6Groups: &b" + groups + "   *[(+)][/MultiWorld inv addgroup name]{&6add a group}"));
+		for(MC_World world: plugin.getServer().getWorlds()){
+			player.sendMessage(ChatUtil.parseString("&b[" + world.getName() + ": &6" +
+					plugin.getMultiInventoryManager().getWhereForWorld(world) +
+					"][/MultiWorld inv setgroup " + world.getName() + " " +
+					plugin.getMultiInventoryManager().getWhereForWorld(world) + "]"));
 		}
 	}
 
@@ -223,7 +259,8 @@ public class MainCommand implements MC_Command {
 				"&6What do you want to do?\n" +
 						"&b[create a world][/MultiWorld create ]{&6click to add a world.\n"
 						+ "&6You just need to enter the name\n"
-						+ "&6everything else will be configured later} &e| &b[manage worlds](/MultiWorld list)"));
+						+ "&6everything else will be configured later} &e| &b[manage worlds](/MultiWorld list)"
+						+ " &e| &b[manage inventories](/MultiWorld inv)"));
 	}
 
 	@Override public boolean hasPermissionToUse(MC_Player player) {
@@ -240,7 +277,10 @@ public class MainCommand implements MC_Command {
 		));
 		for (int id : plugin.getWorldManager().getWorlds()) {
 			player.sendMessage(ChatUtil.parseString(
-					"    [" + (plugin.getWorldManager().isLoaded(id) ? "&a" : "&7") + plugin.getWorldManager().getName(id) + "](/MultiWorld modify " + id + "){&6click here to change world specific settings}" + (plugin.getWorldManager().isLoaded(id) ? "   &b *[(goto)](/MultiWorld tp " + id + "){teleport there}" : "   &b *[(load)](/MultiWorld load " + id + ")")
+					"    [" + (plugin.getWorldManager().isLoaded(id) ? "&a" : "&7") + plugin.getWorldManager().getName(id) +
+							"](/MultiWorld modify " + id + "){&6click here to change world specific settings}" +
+							(plugin.getWorldManager().isLoaded(id) ? "   &b *[(goto)](/MultiWorld tp " + id +
+									"){teleport there}" : "   &b *[(load)](/MultiWorld load " + id + ")")
 			));
 		}
 	}

@@ -1,10 +1,12 @@
 package codecrafter47.multiworld;
 
+import PluginReference.MC_Player;
 import PluginReference.MC_Server;
 import PluginReference.PluginBase;
 import PluginReference.PluginInfo;
 import codecrafter47.multiworld.commands.MainCommand;
 import codecrafter47.multiworld.manager.HookManager;
+import codecrafter47.multiworld.manager.MultiInventoryManager;
 import codecrafter47.multiworld.manager.StorageManager;
 import codecrafter47.multiworld.manager.WorldManager;
 import joebkt._WorldMaster;
@@ -18,6 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 /**
  * Created by florian on 23.11.14.
@@ -41,6 +44,9 @@ public class PluginMultiWorld extends PluginBase {
 	@Getter
 	private HookManager hookManager = new HookManager();
 
+	@Getter
+	MultiInventoryManager multiInventoryManager;
+
 	@Override public void onStartup(MC_Server argServer) {
 		instance = this;
 
@@ -48,9 +54,22 @@ public class PluginMultiWorld extends PluginBase {
 
 		storageManager = new StorageManager(this);
 		worldManager = new WorldManager();
+		multiInventoryManager = new MultiInventoryManager(this);
 
 		// register commands
 		server.registerCommand(new MainCommand(this));
+	}
+
+	@Override public void onTick(int tickNumber) {
+		multiInventoryManager.checkWorldChange();
+	}
+
+	@Override public void onPlayerJoin(MC_Player plr) {
+		getMultiInventoryManager().onPlayerJoin(plr);
+	}
+
+	@Override public void onPlayerLogout(String playerName, UUID uuid) {
+		getMultiInventoryManager().onPlayerDisconnect(uuid);
 	}
 
 	@Override public void onServerFullyLoaded() {
