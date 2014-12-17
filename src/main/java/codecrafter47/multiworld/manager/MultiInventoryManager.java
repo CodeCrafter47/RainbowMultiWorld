@@ -1,14 +1,14 @@
 package codecrafter47.multiworld.manager;
 
-import PluginReference.MC_GameMode;
-import PluginReference.MC_ItemStack;
-import PluginReference.MC_Player;
-import PluginReference.MC_World;
+import PluginReference.*;
+import WrapperObjects.Entities.PlayerWrapper;
 import WrapperObjects.ItemStackWrapper;
 import codecrafter47.multiworld.PluginMultiWorld;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import joebkt.Item;
 import joebkt.ItemStack;
+import joebkt.NBTTagCompound;
 import joebkt.StringParser;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -17,8 +17,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by florian on 13.12.14.
@@ -119,7 +117,7 @@ public class MultiInventoryManager {
 
 	@SneakyThrows
 	private void saveInventory(MC_Player player, String where){
-		File file = new File(plugin.getDataFolder() + File.separator + "inv" + File.separator + where, player.getUUID().toString() + ".json");
+		File file = new File(plugin.getDataFolder() + File.separator + "inventory" + File.separator + where, player.getUUID().toString() + ".json");
 		file.getParentFile().mkdirs();
 		if(file.exists())file.delete();
 		file.createNewFile();
@@ -136,16 +134,20 @@ public class MultiInventoryManager {
 
 	@SneakyThrows
 	private void loadInventory(MC_Player player){
-		File file = new File(plugin.getDataFolder() + File.separator + "inv" + File.separator + getWhereForPlayer(player), player.getUUID().toString() + ".json");
+		File file = new File(plugin.getDataFolder() + File.separator + "inventory" + File.separator + getWhereForPlayer(player), player.getUUID().toString() + ".json");
 		if(!file.exists()){
 			// clear the inventory
 			player.setArmor(new ArrayList<>(Arrays.<MC_ItemStack>asList(null, null, null, null)));
 			player.setInventory(new ArrayList<>(Arrays.<MC_ItemStack>asList(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)));
+			for(int i = 0; i < 27; i++)((PlayerWrapper)player).plr.getEnderChest().setItemAtIdx(i, null);
+			for(int i = 0; i < 54; i++)((PlayerWrapper)player).plr.backpack.setItemAtIdx(i, null);
 			player.updateInventory();
 			player.setHealth(20);
 			player.setFoodLevel(20);
 			player.setExp(0);
 			player.setLevel(0);
+			player.setPotionEffects(new ArrayList<MC_PotionEffect>());
+			player.setFireTicks(0);
 		} else {
 			FileReader reader = new FileReader(file);
 			applyPlayerDataToPlayer(gson.fromJson(reader, PlayerData.class), player);
@@ -168,10 +170,14 @@ public class MultiInventoryManager {
 	public static class PlayerData{
 		String armor[];
 		String inventory[];
+		String enderchest[];
+		String backpack[];
 		float health;
 		int foodLevel;
 		float exp;
 		int level;
+		ArrayList<MC_PotionEffect> potionEffects;
+		int fireTicks;
 	}
 
 	private PlayerData playerToPlayerData(MC_Player player){
@@ -190,10 +196,22 @@ public class MultiInventoryManager {
 			inv[i] = itemstackToString(itemStack);
 		}
 		playerData.setInventory(inv);
+		String[] ec = new String[27];
+		for(int i = 0; i < 27; i++){
+			ec[i] = itemstackToString(new ItemStackWrapper(((PlayerWrapper)player).plr.getEnderChest().getItemAtIdx(i)));
+		}
+		playerData.setEnderchest(ec);
+		String[] bp = new String[54];
+		for(int i = 0; i < 54; i++){
+			bp[i] = itemstackToString(new ItemStackWrapper(((PlayerWrapper)player).plr.backpack.getItemAtIdx(i)));
+		}
+		playerData.setBackpack(bp);
 		playerData.setHealth(player.getHealth());
 		playerData.setFoodLevel(player.getFoodLevel());
 		playerData.setExp(player.getExp());
 		playerData.setLevel(player.getLevel());
+		playerData.setPotionEffects((ArrayList<MC_PotionEffect>) player.getPotionEffects());
+		playerData.setFireTicks(player.getFireTicks());
 		return playerData;
 	}
 
@@ -208,31 +226,36 @@ public class MultiInventoryManager {
 			inv.add(stringToItemStack(s));
 		}
 		player.setInventory(inv);
+		for(int i = 0; i < 27; i++){
+			MC_ItemStack mc_itemStack = stringToItemStack(playerData.getEnderchest()[i]);
+			((PlayerWrapper)player).plr.getEnderChest().setItemAtIdx(i, mc_itemStack != null?((ItemStackWrapper)mc_itemStack).is:null);
+		}
+		for(int i = 0; i < 54; i++){
+			MC_ItemStack mc_itemStack = stringToItemStack(playerData.getBackpack()[i]);
+			((PlayerWrapper)player).plr.backpack.setItemAtIdx(i, mc_itemStack != null ? ((ItemStackWrapper) mc_itemStack).is : null);
+		}
 		player.updateInventory();
 		player.setHealth(playerData.getHealth());
 		player.setFoodLevel(playerData.getFoodLevel());
 		player.setExp(playerData.getExp());
 		player.setLevel(playerData.getLevel());
+		player.setPotionEffects(playerData.getPotionEffects());
+		player.setFireTicks(playerData.getFireTicks());
 	}
 
 	private String itemstackToString(MC_ItemStack itemStack){
 		if(itemStack == null)return "";
 		ItemStack stack = ((ItemStackWrapper)itemStack).is;
 		if(stack == null)return "";
-		return "" + stack.getId() + "," + stack.count + "," + stack.getDamage1() + (stack.getNBTTag()!=null?"," + stack.getNBTTag().toString():"");
+		return stack.serializeIntoNBTTagCompound(new NBTTagCompound()).toString();
 	}
 
 	@SneakyThrows
 	private MC_ItemStack stringToItemStack(String str){
 		if(str.isEmpty())return null;
-		Matcher matcher = Pattern.compile("^(?<id>\\d+),(?<count>\\d+),(?<damage>\\d+)(,(?<tag>.*))?$").matcher(str);
-		matcher.find();
-		MC_ItemStack itemStack = plugin.getServer().createItemStack(Integer.valueOf(matcher.group("id")), Integer.valueOf(matcher.group("count")), Integer.valueOf(matcher.group("damage")));
-		if(matcher.group("tag") != null){
-			ItemStack stack = ((ItemStackWrapper)itemStack).is;
-			stack.setNbtCompound(StringParser.a(matcher.group("tag")));
-		}
-		return itemStack;
+		ItemStack itemStack = new ItemStack(Item.getItemFromID(1));
+		itemStack.deserializeFromNBTTagCompound(StringParser.a(str));
+		return new ItemStackWrapper(itemStack);
 	}
 
 	private MC_World getWorldByName(String name){
