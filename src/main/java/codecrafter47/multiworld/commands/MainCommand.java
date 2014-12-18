@@ -41,6 +41,9 @@ public class MainCommand implements MC_Command {
 	}
 
 	@Override public void handleCommand(MC_Player player, String[] strings) {
+		if(player == null){
+			return;
+		}
 		if (strings.length == 0) {
 			showHelp((ChatPlayer) player);
 		} else if (strings[0].equals("tp") && strings.length == 2){

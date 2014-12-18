@@ -5,14 +5,17 @@ import PluginReference.MC_Server;
 import PluginReference.PluginBase;
 import PluginReference.PluginInfo;
 import codecrafter47.multiworld.commands.MainCommand;
+import codecrafter47.multiworld.commands.TPCommand;
 import codecrafter47.multiworld.manager.HookManager;
 import codecrafter47.multiworld.manager.MultiInventoryManager;
 import codecrafter47.multiworld.manager.StorageManager;
 import codecrafter47.multiworld.manager.WorldManager;
+import joebkt.CommandSetup;
 import joebkt._WorldMaster;
 import joebkt._WorldRegistration;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,6 +61,7 @@ public class PluginMultiWorld extends PluginBase {
 
 		// register commands
 		server.registerCommand(new MainCommand(this));
+		((CommandSetup)MinecraftServer.getServer().getCommandSender()).addCommand(new TPCommand());
 	}
 
 	@Override public void onTick(int tickNumber) {
