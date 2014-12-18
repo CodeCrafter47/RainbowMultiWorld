@@ -33,7 +33,7 @@ public class MultiInventoryManager {
 	public MultiInventoryManager(PluginMultiWorld plugin) {
 		this.plugin = plugin;
 		File store = new File(plugin.getDataFolder(), "inventories.json");
-		if(store.exists()){
+		if (store.exists()) {
 			try {
 				config = gson.fromJson(new FileReader(store), MultiInventoryConfig.class);
 			}
@@ -46,7 +46,8 @@ public class MultiInventoryManager {
 	public void saveData() {
 		File store = new File(plugin.getDataFolder(), "inventories.json");
 		store.getParentFile().mkdirs();
-		if(store.exists())store.delete();
+		if (store.exists())
+			store.delete();
 		try {
 			FileWriter writer = new FileWriter(store);
 			gson.toJson(config, writer);
@@ -58,41 +59,47 @@ public class MultiInventoryManager {
 		}
 	}
 
-	public List<String> getGroups(){
+	public List<String> getGroups() {
 		return new ArrayList<>(config.inv.keySet());
 	}
 
-	public void setGroupForWorld(MC_World world, String group){
+	public void setGroupForWorld(MC_World world, String group) {
 		config.inv.get(getWhereForWorld(world)).remove(world.getName());
 		config.inv.get(group).add(world.getName());
 		saveData();
 	}
 
-	public void addGroup(String name){
+	public void addGroup(String name) {
 		config.inv.put(name, new ArrayList<String>());
 		saveData();
 	}
 
-	public void deleteGroup(String name){
+	public void deleteGroup(String name) {
 		config.inv.remove(name);
 	}
 
 	public void checkWorldChange() {
-		for(MC_Player player: plugin.getServer().getPlayers()){
+		for (MC_Player player : plugin.getServer().getPlayers()) {
 			try {
 				if (!player.getWorld().getName().equals(lastWorld.get(player.getUUID()))) {
 					// player changed world
-					player.setGameMode(MC_GameMode.valueOf(plugin.getStorageManager().getCustomConfig(player.getWorld().getDimension()).getGameMode().name()));
+					if (!player.hasPermission("multiworld.bypassgamemode")) {
+						player.setGameMode(
+								MC_GameMode.valueOf(plugin.getStorageManager().getCustomConfig(
+												player.getWorld().getDimension()).getGameMode().name()));
+					}
 					// save old inv
 					if (!getWhereForWorld(getWorldByName(lastWorld.get(player.getUUID()))).equals(getWhereForPlayer(player))) {
 						saveInventory(player, getWhereForWorld(getWorldByName(lastWorld.get(player.getUUID()))));
 						lastWorld.put(player.getUUID(), player.getWorld().getName());
 						loadInventory(player);
-					} else {
+					}
+					else {
 						lastWorld.put(player.getUUID(), player.getWorld().getName());
 					}
 				}
-			} catch (Exception ex){
+			}
+			catch (Exception ex) {
 				plugin.getLogger().error("Failed to update inventory for " + player.getName(), ex);
 			}
 		}
@@ -107,8 +114,9 @@ public class MultiInventoryManager {
 		lastWorld.remove(uuid);
 	}
 
-	private static class MultiInventoryConfig{
+	private static class MultiInventoryConfig {
 		Map<String, List<String>> inv = new HashMap<>();
+
 		{
 			inv.put("default", Arrays.asList("world", "world_nether", "world_end"));
 			inv.put("creative", Arrays.asList("creative", "creative_nether", "creative_end"));
@@ -116,10 +124,11 @@ public class MultiInventoryManager {
 	}
 
 	@SneakyThrows
-	private void saveInventory(MC_Player player, String where){
+	private void saveInventory(MC_Player player, String where) {
 		File file = new File(plugin.getDataFolder() + File.separator + "inventory" + File.separator + where, player.getUUID().toString() + ".json");
 		file.getParentFile().mkdirs();
-		if(file.exists())file.delete();
+		if (file.exists())
+			file.delete();
 		file.createNewFile();
 		try {
 			FileWriter writer = new FileWriter(file);
@@ -133,14 +142,16 @@ public class MultiInventoryManager {
 	}
 
 	@SneakyThrows
-	private void loadInventory(MC_Player player){
+	private void loadInventory(MC_Player player) {
 		File file = new File(plugin.getDataFolder() + File.separator + "inventory" + File.separator + getWhereForPlayer(player), player.getUUID().toString() + ".json");
-		if(!file.exists()){
+		if (!file.exists()) {
 			// clear the inventory
 			player.setArmor(new ArrayList<>(Arrays.<MC_ItemStack>asList(null, null, null, null)));
 			player.setInventory(new ArrayList<>(Arrays.<MC_ItemStack>asList(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)));
-			for(int i = 0; i < 27; i++)((PlayerWrapper)player).plr.getEnderChest().setItemAtIdx(i, null);
-			for(int i = 0; i < 54; i++)((PlayerWrapper)player).plr.backpack.setItemAtIdx(i, null);
+			for (int i = 0; i < 27; i++)
+				((PlayerWrapper) player).plr.getEnderChest().setItemAtIdx(i, null);
+			for (int i = 0; i < 54; i++)
+				((PlayerWrapper) player).plr.backpack.setItemAtIdx(i, null);
 			player.updateInventory();
 			player.setHealth(20);
 			player.setFoodLevel(20);
@@ -148,26 +159,28 @@ public class MultiInventoryManager {
 			player.setLevel(0);
 			player.setPotionEffects(new ArrayList<MC_PotionEffect>());
 			player.setFireTicks(0);
-		} else {
+		}
+		else {
 			FileReader reader = new FileReader(file);
 			applyPlayerDataToPlayer(gson.fromJson(reader, PlayerData.class), player);
 			reader.close();
 		}
 	}
 
-	public String getWhereForWorld(MC_World world){
-		for(Map.Entry<String, List<String>> entry: config.inv.entrySet()){
-			if(entry.getValue().contains(world.getName()))return entry.getKey();
+	public String getWhereForWorld(MC_World world) {
+		for (Map.Entry<String, List<String>> entry : config.inv.entrySet()) {
+			if (entry.getValue().contains(world.getName()))
+				return entry.getKey();
 		}
 		return "default";
 	}
 
-	private String getWhereForPlayer(MC_Player player){
+	private String getWhereForPlayer(MC_Player player) {
 		return getWhereForWorld(player.getWorld());
 	}
 
 	@Data
-	public static class PlayerData{
+	public static class PlayerData {
 		String armor[];
 		String inventory[];
 		String enderchest[];
@@ -180,7 +193,7 @@ public class MultiInventoryManager {
 		int fireTicks;
 	}
 
-	private PlayerData playerToPlayerData(MC_Player player){
+	private PlayerData playerToPlayerData(MC_Player player) {
 		PlayerData playerData = new PlayerData();
 		String[] armor = new String[4];
 		List<MC_ItemStack> armor1 = player.getArmor();
@@ -197,13 +210,13 @@ public class MultiInventoryManager {
 		}
 		playerData.setInventory(inv);
 		String[] ec = new String[27];
-		for(int i = 0; i < 27; i++){
-			ec[i] = itemstackToString(new ItemStackWrapper(((PlayerWrapper)player).plr.getEnderChest().getItemAtIdx(i)));
+		for (int i = 0; i < 27; i++) {
+			ec[i] = itemstackToString(new ItemStackWrapper(((PlayerWrapper) player).plr.getEnderChest().getItemAtIdx(i)));
 		}
 		playerData.setEnderchest(ec);
 		String[] bp = new String[54];
-		for(int i = 0; i < 54; i++){
-			bp[i] = itemstackToString(new ItemStackWrapper(((PlayerWrapper)player).plr.backpack.getItemAtIdx(i)));
+		for (int i = 0; i < 54; i++) {
+			bp[i] = itemstackToString(new ItemStackWrapper(((PlayerWrapper) player).plr.backpack.getItemAtIdx(i)));
 		}
 		playerData.setBackpack(bp);
 		playerData.setHealth(player.getHealth());
@@ -215,7 +228,7 @@ public class MultiInventoryManager {
 		return playerData;
 	}
 
-	private void applyPlayerDataToPlayer(PlayerData playerData, MC_Player player){
+	private void applyPlayerDataToPlayer(PlayerData playerData, MC_Player player) {
 		ArrayList<MC_ItemStack> armor = new ArrayList<>();
 		for (String s : playerData.getArmor()) {
 			armor.add(stringToItemStack(s));
@@ -226,13 +239,13 @@ public class MultiInventoryManager {
 			inv.add(stringToItemStack(s));
 		}
 		player.setInventory(inv);
-		for(int i = 0; i < 27; i++){
+		for (int i = 0; i < 27; i++) {
 			MC_ItemStack mc_itemStack = stringToItemStack(playerData.getEnderchest()[i]);
-			((PlayerWrapper)player).plr.getEnderChest().setItemAtIdx(i, mc_itemStack != null?((ItemStackWrapper)mc_itemStack).is:null);
+			((PlayerWrapper) player).plr.getEnderChest().setItemAtIdx(i, mc_itemStack != null ? ((ItemStackWrapper) mc_itemStack).is : null);
 		}
-		for(int i = 0; i < 54; i++){
+		for (int i = 0; i < 54; i++) {
 			MC_ItemStack mc_itemStack = stringToItemStack(playerData.getBackpack()[i]);
-			((PlayerWrapper)player).plr.backpack.setItemAtIdx(i, mc_itemStack != null ? ((ItemStackWrapper) mc_itemStack).is : null);
+			((PlayerWrapper) player).plr.backpack.setItemAtIdx(i, mc_itemStack != null ? ((ItemStackWrapper) mc_itemStack).is : null);
 		}
 		player.updateInventory();
 		player.setHealth(playerData.getHealth());
@@ -243,24 +256,28 @@ public class MultiInventoryManager {
 		player.setFireTicks(playerData.getFireTicks());
 	}
 
-	private String itemstackToString(MC_ItemStack itemStack){
-		if(itemStack == null)return "";
-		ItemStack stack = ((ItemStackWrapper)itemStack).is;
-		if(stack == null)return "";
+	private String itemstackToString(MC_ItemStack itemStack) {
+		if (itemStack == null)
+			return "";
+		ItemStack stack = ((ItemStackWrapper) itemStack).is;
+		if (stack == null)
+			return "";
 		return stack.serializeIntoNBTTagCompound(new NBTTagCompound()).toString();
 	}
 
 	@SneakyThrows
-	private MC_ItemStack stringToItemStack(String str){
-		if(str.isEmpty())return null;
+	private MC_ItemStack stringToItemStack(String str) {
+		if (str.isEmpty())
+			return null;
 		ItemStack itemStack = new ItemStack(Item.getItemFromID(1));
 		itemStack.deserializeFromNBTTagCompound(StringParser.a(str));
 		return new ItemStackWrapper(itemStack);
 	}
 
-	private MC_World getWorldByName(String name){
-		for(MC_World world: plugin.getServer().getWorlds()){
-			if(world.getName().equals(name))return world;
+	private MC_World getWorldByName(String name) {
+		for (MC_World world : plugin.getServer().getWorlds()) {
+			if (world.getName().equals(name))
+				return world;
 		}
 		throw new RuntimeException("World " + name + " does not exist!");
 	}
