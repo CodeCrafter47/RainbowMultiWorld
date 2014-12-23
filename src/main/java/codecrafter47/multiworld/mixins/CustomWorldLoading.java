@@ -67,7 +67,7 @@ public abstract class CustomWorldLoading {
 		for (_WorldRegistration worldReg : _WorldMaster.worldRegs) {
 			worldReg.internal_loadedWorldIdx = 0;
 		}
-		;
+
 
 		this.convertMap(var1);
 		this.setWhatServerIsCurrentlyDoing("menu.loadingLevel");
@@ -110,7 +110,7 @@ public abstract class CustomWorldLoading {
 				this.worldServers[i] = (WorldServer) (new WorldServer((MinecraftServer) (Object) this, dataManager, worldData, dimenForWorld, this.methodProfiler)).prepareWorldAndReturnObject();
 				this.worldServers[i].initializeLevel(worldSettingsBase);
 			} else {
-				this.worldServers[i] = (WorldServer) (new WorldServer((MinecraftServer) (Object) this, dataManager, worldData, dimenForWorld, this.methodProfiler)).prepareWorldAndReturnObject();
+				this.worldServers[i] = (WorldServer) (new AlternateDimensionWorld((MinecraftServer) (Object) this, dataManager, dimenForWorld, this.worldServers[0], this.methodProfiler)).prepareWorldAndReturnObject();
 				this.worldServers[i].initializeLevel(ws);
 			}
 
