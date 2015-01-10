@@ -69,6 +69,11 @@ public class WorldManager {
 		}
 		WorldServer myWorld;//  = (WorldServer) (new AlternateDimensionWorld(server, dataManager, dimenForWorld, server.worldServers[0], server.methodProfiler)).prepareWorldAndReturnObject();
 		myWorld = (WorldServer)(new WorldServer(server, dataManager, worldData, id, server.methodProfiler)).prepareWorldAndReturnObject();
+		// inject scoreboard
+		Field scoreboard = World.class.getDeclaredField("scoreboard");
+		scoreboard.setAccessible(true);
+		scoreboard.set(myWorld, server.getWorldServerByDimension(0).getScoreboard());
+
 		servers[loadedIdx] = myWorld;
 		server.worldServers = servers;
 
