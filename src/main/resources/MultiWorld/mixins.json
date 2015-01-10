@@ -1,6 +1,9 @@
 {
     "package": "codecrafter47.multiworld.mixins",
     "mixins": [
+        "FixCmdWeather",
+        "FixWeather",
+        "FixCmdToggleDownFall",
         "FixConstructedPortalType",
         "LinkEndPortal",
         "FixCmdGamerule",
