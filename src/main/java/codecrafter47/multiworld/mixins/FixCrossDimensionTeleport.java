@@ -87,6 +87,7 @@ public class FixCrossDimensionTeleport extends EntityWrapper {
                 MinecraftServer.getServer().getThePlayerList().players.add(plr);
                 plr.playerInteractManager.setInnerWorld(localWorldTo);
                 plr.setHealth(plr.getHealth());
+                plr.updateInventory(plr.defaultContainer);
             } else {
                 this.plr.TeleportSLoc(sloc);
             }
