@@ -21,19 +21,25 @@ public abstract class FixWeather extends World{
 
     @Overwrite
     protected void handleWeather() {
+        boolean var1 = this.S();
         super.handleWeather();
-        this.m_server.getThePlayerList().a(new Packet_ChangeGameState(7, this.p), this.worldProvider.getDimenIdx());
-
-        this.m_server.getThePlayerList().a(new Packet_ChangeGameState(8, this.r), this.worldProvider.getDimenIdx());
-
-        if (!this.S()) {
-            this.m_server.getThePlayerList().a(new Packet_ChangeGameState(2, 0.0F), this.worldProvider.getDimenIdx());
-        } else {
-            this.m_server.getThePlayerList().a(new Packet_ChangeGameState(1, 0.0F), this.worldProvider.getDimenIdx());
+        if(this.o != this.p) {
+            this.m_server.getThePlayerList().a(new Packet_ChangeGameState(7, this.p), this.worldProvider.getDimenIdx());
         }
-        this.m_server.getThePlayerList().a(new Packet_ChangeGameState(7, this.p), this.worldProvider.getDimenIdx());
 
-        this.m_server.getThePlayerList().a(new Packet_ChangeGameState(8, this.r), this.worldProvider.getDimenIdx());
+        if(this.q != this.r) {
+            this.m_server.getThePlayerList().a(new Packet_ChangeGameState(8, this.r), this.worldProvider.getDimenIdx());
+        }
 
+        if(var1 != this.S()) {
+            if(var1) {
+                this.m_server.getThePlayerList().a(new Packet_ChangeGameState(2, 0.0F), this.worldProvider.getDimenIdx());
+            } else {
+                this.m_server.getThePlayerList().a(new Packet_ChangeGameState(1, 0.0F), this.worldProvider.getDimenIdx());
+            }
+
+            this.m_server.getThePlayerList().a(new Packet_ChangeGameState(7, this.p), this.worldProvider.getDimenIdx());
+            this.m_server.getThePlayerList().a(new Packet_ChangeGameState(8, this.r), this.worldProvider.getDimenIdx());
+        }
     }
 }

@@ -88,6 +88,11 @@ public class FixCrossDimensionTeleport extends EntityWrapper {
                 plr.playerInteractManager.setInnerWorld(localWorldTo);
                 plr.setHealth(plr.getHealth());
                 plr.updateInventory(plr.defaultContainer);
+                if (localWorldTo.S()) {
+                    plr.plrConnection.sendPacket(new Packet_ChangeGameState(2, 0.0F));
+                } else {
+                    plr.plrConnection.sendPacket(new Packet_ChangeGameState(1, 0.0F));
+                }
             } else {
                 this.plr.TeleportSLoc(sloc);
             }
