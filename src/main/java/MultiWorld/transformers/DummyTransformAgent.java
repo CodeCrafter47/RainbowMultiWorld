@@ -7,14 +7,14 @@ import joebkt._JoeUtils;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 /**
@@ -30,6 +30,8 @@ public class DummyTransformAgent implements ClassFileTransformer {
 
 	static boolean failure = false;
 
+    private static Set<String> transformedClasses = new HashSet<>();
+
 	// Public static void main() but for this agent
 	@SuppressWarnings("unchecked")
 	public static void agentmain(String string, Instrumentation instrument) {
@@ -38,16 +40,21 @@ public class DummyTransformAgent implements ClassFileTransformer {
 		LogManager.getLogger().info("Loaded transformer agent!");
 
 		transformer = new DummyTransformAgent();
-		instrumentation.addTransformer(transformer);
+		instrumentation.addTransformer(transformer, true);
 		try {
 			// redefine classes
 			instrumentation.appendToSystemClassLoaderSearch(new JarFile(new File("plugins_mod" + File.separator + "MultiWorld.jar")));
 
 			mixinTransformer = new MixinTransformer(DummyTransformAgent.class.getClassLoader().getResourceAsStream("MultiWorld/mixins.json"));
 
-			for (String s : ((MixinTransformer) mixinTransformer).getMixinTargets()) {
-				instrumentation.redefineClasses(new ClassDefinition(Class.forName(s),getBaseClass(s)));
-				if(failure)return;
+			for (String s : new ArrayList<>(((MixinTransformer) mixinTransformer).getMixinTargets())) {
+                if(!transformedClasses.contains(s)) {
+                    Class<?> aClass = Class.forName(s);
+                    if(!transformedClasses.contains(s)) {
+                        instrumentation.retransformClasses(aClass);
+                        if (failure || !transformedClasses.contains(s)) return;
+                    }
+                }
 			}
 
 			// init the real plugin
@@ -68,6 +75,7 @@ public class DummyTransformAgent implements ClassFileTransformer {
 	@SneakyThrows
 	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 		String realName = className.replaceAll("/", ".");
+        transformedClasses.add(realName);
 		if (((MixinTransformer) mixinTransformer).getMixinTargets().contains(realName)) {
 			try {
 				return ((MixinTransformer) mixinTransformer).transform(realName, realName, classfileBuffer);
@@ -78,18 +86,5 @@ public class DummyTransformAgent implements ClassFileTransformer {
 			}
 		}
 		return classfileBuffer;
-	}
-
-	@SneakyThrows
-	public static byte[] getBaseClass(String className) {
-		InputStream stream = DummyTransformAgent.class.getClassLoader().getResourceAsStream(className.replace('.', '/') + ".class");
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		int nRead;
-		byte[] data = new byte[4096];
-		while ((nRead = stream.read(data)) != -1) {
-			buffer.write(data, 0, nRead);
-		}
-		buffer.flush();
-		return buffer.toByteArray();
 	}
 }
