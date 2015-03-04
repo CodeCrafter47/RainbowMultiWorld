@@ -32,6 +32,8 @@ public class DummyTransformAgent implements ClassFileTransformer {
 
     private static Set<String> transformedClasses = new HashSet<>();
 
+    private static String notransform = "java.lang.Object";
+
 	// Public static void main() but for this agent
 	@SuppressWarnings("unchecked")
 	public static void agentmain(String string, Instrumentation instrument) {
@@ -44,12 +46,17 @@ public class DummyTransformAgent implements ClassFileTransformer {
 		try {
 			// redefine classes
 			instrumentation.appendToSystemClassLoaderSearch(new JarFile(new File("plugins_mod" + File.separator + "MultiWorld.jar")));
-
 			mixinTransformer = new MixinTransformer(DummyTransformAgent.class.getClassLoader().getResourceAsStream("MultiWorld/mixins.json"));
 
 			for (String s : new ArrayList<>(((MixinTransformer) mixinTransformer).getMixinTargets())) {
                 if(!transformedClasses.contains(s)) {
+                    if(s.contains("WorldProvider")){
+                        notransform = s;
+                    }
                     Class<?> aClass = Class.forName(s);
+                    if(s.contains("WorldProvider")){
+                        notransform = "java.lang.Object";
+                    }
                     if(!transformedClasses.contains(s)) {
                         instrumentation.retransformClasses(aClass);
                         if (failure || !transformedClasses.contains(s)) return;
@@ -75,9 +82,9 @@ public class DummyTransformAgent implements ClassFileTransformer {
 	@SneakyThrows
 	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 		String realName = className.replaceAll("/", ".");
-        transformedClasses.add(realName);
-		if (((MixinTransformer) mixinTransformer).getMixinTargets().contains(realName)) {
+		if (((MixinTransformer) mixinTransformer).getMixinTargets().contains(realName) && !notransform.equals(realName)) {
 			try {
+                transformedClasses.add(realName);
 				return ((MixinTransformer) mixinTransformer).transform(realName, realName, classfileBuffer);
 			}
 			catch (Throwable ex) {
@@ -85,6 +92,6 @@ public class DummyTransformAgent implements ClassFileTransformer {
 				failure = true;
 			}
 		}
-		return classfileBuffer;
+		return null;
 	}
 }
