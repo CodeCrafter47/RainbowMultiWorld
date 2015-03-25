@@ -57,16 +57,8 @@ public abstract class TreeTransformer {
 	 * @return
 	 */
 	protected final byte[] writeClass(ClassNode classNode) {
-		// Use optimised writer for speed
-		if (this.classReader != null && this.classNode == classNode) {
-			this.classNode = null;
-			ClassWriter writer = new ClassWriter(this.classReader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-			this.classReader = null;
-			classNode.accept(writer);
-			return writer.toByteArray();
-		}
 		this.classNode = null;
-		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+		ClassWriter writer = new ClassWriter(0);
 		classNode.accept(writer);
 		return writer.toByteArray();
 	}
