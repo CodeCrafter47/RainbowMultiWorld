@@ -1,23 +1,20 @@
 {
-    "package": "codecrafter47.multiworld.mixins",
-    "mixins": [
-        "FixCmdWeather",
-        "FixWeather",
-        "FixCmdToggleDownFall",
-        "FixConstructedPortalType",
-        "LinkEndPortal",
-        "FixCmdGamerule",
-        "FixCmdDifficulty",
-        "CustomWorldLoading",
-        "FixBiomeGenerator",
-        "FixChunkProvider",
-        "ImplementChatAPI",
-        "AddWorldTypeSpecificReturnValues",
-        "MixinRespawnWorld",
-        "InjectEnvironment",
-        "LinkNetherPortals",
-        "AllowPortalCreationInCustomWorlds",
-        "FixCustomWorldNetherSpawnPosition",
-        "FixCrossDimensionTeleport"
-    ]
+  "package": "codecrafter47.multiworld.mixins",
+  "minVersion": "0.5.3-SNAPSHOT",
+  "required": "true",
+  "mixins": [
+    "MixinBlockFire",
+    "MixinCommandDifficulty",
+    "MixinCommandGameRule",
+    "MixinCommandToggleDownfall",
+    "MixinCommandWeather",
+    "MixinDimensionType",
+    "MixinEntity",
+    "MixinEntityPlayerMP",
+    "MixinMinecraftServer",
+    "MixinNetHandlerPlayServer",
+    "MixinPlayerList",
+    "MixinWorldServer",
+    "MixinCommandDefaultGameMode"
+  ]
 }

@@ -1,38 +1,46 @@
 package codecrafter47.multiworld.commands;
 
+import PluginReference.MC_Player;
 import PluginReference.MC_World;
-import WrapperObjects.Entities.PlayerWrapper;
 import codecrafter47.multiworld.PluginMultiWorld;
-import joebkt.*;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.PlayerNotFoundException;
+import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 
 /**
  * Created by florian on 18.12.14.
  */
-public class TPCommand extends CommandAbstract {
+public class TPCommand extends CommandBase {
 	@Override public String getCommandName() {
 		return "mwtp";
 	}
 
-	@Override public String getHelpLine(CommandSender commandSender) {
+	@Override
+	public String getCommandUsage(ICommandSender iCommandSender) {
 		return "/mvtp <player> <world>";
 	}
 
-	@Override public void handleCommand(CommandSender commandSender, String[] strings) throws di_BaseException {
+	@Override
+	public void execute(MinecraftServer minecraftServer, ICommandSender commandSender, String[] strings) throws CommandException {
 		if(commandSender instanceof EntityPlayer){
-			throw new dm_PlayerNotFoundException("this command is not for players");
+			throw new WrongUsageException("this command is not for players");
 		}
 		if(strings.length != 2){
-			throw new dm_PlayerNotFoundException("/mvtp <player> <world>");
+			throw new WrongUsageException("/mvtp <player> <world>");
 		}
 		MC_World world = getWorldByName(strings[1]);
 		if(world == null){
-			throw new dm_PlayerNotFoundException("unknown world: " + strings[1]);
+			throw new WrongUsageException("unknown world: " + strings[1]);
 		}
-		EntityPlayer player = CommandAbstract.findPlayerTarget(commandSender, strings[0]);
+		EntityPlayer player = CommandBase.getPlayer(minecraftServer, commandSender, strings[0]);
 		if(player == null){
-			throw new dm_PlayerNotFoundException("unknown player: " + strings[0]);
+			throw new PlayerNotFoundException("unknown player: " + strings[0]);
 		}
-		new PlayerWrapper(player).teleport(world.getSpawnLocation());
+		((MC_Player)player).teleport(world.getSpawnLocation());
 	}
 
 	private MC_World getWorldByName(String name){
@@ -42,7 +50,8 @@ public class TPCommand extends CommandAbstract {
 		return null;
 	}
 
-	@Override public boolean hasPermissionToUse(CommandSender var1) {
-		return !(var1 instanceof EntityPlayer) || super.hasPermissionToUse(var1);
+	@Override
+	public boolean checkPermission(MinecraftServer minecraftServer, ICommandSender iCommandSender) {
+		return !(iCommandSender instanceof EntityPlayer) || super.checkPermission(minecraftServer, iCommandSender);
 	}
 }

@@ -10,55 +10,65 @@
 
     <repositories>
         <repository>
-            <id>repository</id>
-            <releases>
-                <enabled>true</enabled>
-                <checksumPolicy>ignore</checksumPolicy>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <url>file://${project.basedir}/repository/</url>
-        </repository>
-        <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+        <repository>
+            <id>codecrafter47-repo</id>
+            <url>http://nexus.codecrafter47.dyndns.eu/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>sponge-repo</id>
+            <url>http://repo.spongepowered.org/maven</url>
+        </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codecrafter47-repo</id>
+            <url>http://nexus.codecrafter47.dyndns.eu/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>sponge-repo</id>
+            <url>http://repo.spongepowered.org/maven</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <minecraft.version>1.9</minecraft.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>rainbow</groupId>
-            <artifactId>Rainbow</artifactId>
-            <version>50</version>
-            <type>jar</type>
+            <groupId>org.projectrainbow</groupId>
+            <artifactId>rainbow</artifactId>
+            <version>1.9-SNAPSHOT</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.projectrainbow</groupId>
+                    <artifactId>minecraft-server</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>codecrafter47.multiworld</groupId>
+            <artifactId>minecraft-server</artifactId>
+            <version>${minecraft.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.0.2</version>
-            <type>jar</type>
+            <groupId>codecrafter47.multiworld</groupId>
+            <artifactId>minecraft-server-obfuscated</artifactId>
+            <version>${minecraft.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.0.2</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-debug-all</artifactId>
-            <version>5.0.3</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -67,38 +77,108 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.2.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
-            <version>1.8-SNAPSHOT</version>
+            <version>1.9-SNAPSHOT</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>mixin</artifactId>
+            <version>0.5.3-SNAPSHOT</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.googlecode.jarjar</groupId>
+                    <artifactId>jarjar</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm-commons</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.minecraft</groupId>
+                    <artifactId>launchwrapper</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
     </dependencies>
 
     <build>
-        <defaultGoal>clean install</defaultGoal>
+        <defaultGoal>initialize clean install</defaultGoal>
         <finalName>${project.name}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5</version>
+                <configuration>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <annotationProcessors>
+                        <annotationProcessor>lombok.core.AnnotationProcessor</annotationProcessor>
+                    </annotationProcessors>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.1</version>
             </plugin>
+            <!--
+            <plugin>
+                <groupId>net.md-5</groupId>
+                <artifactId>simulare</artifactId>
+                <version>0.1</version>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.13</version>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <ignores>
+                        <ignore>java.lang.Throwable</ignore>
+                    </ignores>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java16</artifactId>
+                        <version>1.1</version>
+                    </signature>
+                </configuration>
+            </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
+                <version>2.4.3</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -108,26 +188,118 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.objectweb.asm</pattern>
-                                    <shadedPattern>MultiWorld.libs.org.objectweb.asm</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>net.md_5.bungee</pattern>
                                     <shadedPattern>MultiWorld.libs.net.md_5.bungee</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <TweakClass>
+                                            org.spongepowered.asm.launch.MixinTweaker
+                                        </TweakClass>
+                                        <MixinConfigs>MultiWorld/mixins.json</MixinConfigs>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>download-minecraft-server</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>
+                                https://s3.amazonaws.com/Minecraft.Download/versions/${minecraft.version}/minecraft_server.${minecraft.version}.jar
+                            </url>
+                            <unpack>false</unpack>
+                            <outputDirectory>
+                                ${project.build.directory}
+                            </outputDirectory>
+                            <md5>ff68834eee875bcf367422c67673207c</md5>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <createChecksum>true</createChecksum>
+                            <groupId>codecrafter47.multiworld</groupId>
+                            <artifactId>minecraft-server-obfuscated</artifactId>
+                            <version>${minecraft.version}</version>
+                            <packaging>jar</packaging>
+                            <file>${project.build.directory}/minecraft_server.${minecraft.version}.jar</file>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.md-5</groupId>
+                <artifactId>specialsource-maven-plugin</artifactId>
+                <version>1.2.1-CodeCrafter47-4-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-remapped-file</goal>
+                        </goals>
+                        <configuration>
+                            <srgIn>${project.basedir}/mapping.srg</srgIn>
+                            <createChecksum>true</createChecksum>
+                            <groupId>codecrafter47.multiworld</groupId>
+                            <artifactId>minecraft-server</artifactId>
+                            <version>${minecraft.version}</version>
+                            <packaging>jar</packaging>
+                            <inJars>
+                                <inJar>
+                                    ${project.build.directory}/minecraft_server.${minecraft.version}.jar
+                                </inJar>
+                            </inJars>
+                            <outputDirectory>${project.build.directory}
+                            </outputDirectory>
+                            <skipDebug>true</skipDebug>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>reobfuscate</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>remap</goal>
+                        </goals>
+                        <configuration>
+                            <srgIn>${project.basedir}/mapping.srg
+                            </srgIn>
+                            <reverse>true</reverse>
+                            <skipDebug>false</skipDebug>
+                            <copyResources>true</copyResources>
+                            <mixinSupport>true</mixinSupport>
+                            <remappedDependencies>
+                                <remappedDependency>
+                                    codecrafter47.multiworld:minecraft-server:${minecraft.version}:jar
+                                </remappedDependency>
+                            </remappedDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

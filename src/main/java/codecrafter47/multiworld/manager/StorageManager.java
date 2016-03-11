@@ -2,11 +2,16 @@ package codecrafter47.multiworld.manager;
 
 import codecrafter47.multiworld.PluginMultiWorld;
 import codecrafter47.multiworld.api.WorldConfiguration;
+import codecrafter47.multiworld.util.DifficultyTypeAdapter;
+import codecrafter47.multiworld.util.GameTypeTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lombok.AllArgsConstructor;
+import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.WorldSettings;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.HashMap;
 
 /**
@@ -15,7 +20,10 @@ import java.util.HashMap;
 public class StorageManager {
 
 	private PluginMultiWorld plugin;
-	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	private Gson gson = new GsonBuilder()
+			.registerTypeAdapter(EnumDifficulty.class, new DifficultyTypeAdapter())
+			.registerTypeAdapter(WorldSettings.GameType.class, new GameTypeTypeAdapter())
+			.setPrettyPrinting().create();
 
 	private HashMap<Integer, WorldConfiguration> worldData = new HashMap<>();
 
@@ -32,12 +40,15 @@ public class StorageManager {
 		}
 	}
 
-	public WorldConfiguration getCustomConfig(int stupidId){
-		if(worldData.containsKey(stupidId)){
-			return worldData.get(stupidId);
+	public WorldConfiguration getCustomConfig(int worldId){
+        if (worldId < 2) {
+            plugin.getLogger().warn("World " + worldId + " data requested.", new Exception());
+        }
+		if(worldData.containsKey(worldId)){
+			return worldData.get(worldId);
 		} else {
 			WorldConfiguration configuration = new WorldConfiguration();
-			worldData.put(stupidId, configuration);
+			worldData.put(worldId, configuration);
 			saveData();
 			return configuration;
 		}
@@ -57,8 +68,12 @@ public class StorageManager {
 		}
 	}
 
-	@AllArgsConstructor
 	private static class Container{
 		HashMap<Integer, WorldConfiguration> worlds;
+
+		@java.beans.ConstructorProperties({"worlds"})
+		public Container(HashMap<Integer, WorldConfiguration> worlds) {
+			this.worlds = worlds;
+		}
 	}
 }

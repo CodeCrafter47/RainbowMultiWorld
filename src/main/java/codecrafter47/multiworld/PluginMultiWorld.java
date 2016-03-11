@@ -10,14 +10,12 @@ import codecrafter47.multiworld.manager.HookManager;
 import codecrafter47.multiworld.manager.MultiInventoryManager;
 import codecrafter47.multiworld.manager.StorageManager;
 import codecrafter47.multiworld.manager.WorldManager;
-import joebkt.CommandSetup;
-import joebkt._WorldMaster;
 import joebkt._WorldRegistration;
-import lombok.Getter;
 import lombok.SneakyThrows;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.command.ServerCommandManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.projectrainbow._DiwUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -28,30 +26,29 @@ import java.util.UUID;
 /**
  * Created by florian on 23.11.14.
  */
-// This is the real Plugin
 public class PluginMultiWorld extends PluginBase {
 	private Logger logger = LogManager.getLogger();
 
-	@Getter
 	private MC_Server server;
 
-	@Getter
 	private static PluginMultiWorld instance;
 
-	@Getter
 	private WorldManager worldManager;
 
-	@Getter
 	private StorageManager storageManager;
 
-	@Getter
 	private HookManager hookManager = new HookManager();
 
-	@Getter
 	MultiInventoryManager multiInventoryManager;
+
+	public static PluginMultiWorld getInstance() {
+		return PluginMultiWorld.instance;
+	}
 
 	@Override public void onStartup(MC_Server argServer) {
 		instance = this;
+
+		getDataFolder().mkdirs();
 
 		server = argServer;
 
@@ -61,7 +58,7 @@ public class PluginMultiWorld extends PluginBase {
 
 		// register commands
 		server.registerCommand(new MainCommand(this));
-		((CommandSetup)MinecraftServer.getServer().getCommandSender()).addCommand(new TPCommand());
+		((ServerCommandManager) _DiwUtils.getMinecraftServer().getCommandManager()).registerCommand(new TPCommand());
 	}
 
 	@Override public void onTick(int tickNumber) {
@@ -78,6 +75,11 @@ public class PluginMultiWorld extends PluginBase {
 
 	@Override public void onServerFullyLoaded() {
 		getHookManager().scanForHooks(getServer());
+	}
+
+	@Override
+	public void onShutdown() {
+		_WorldMaster.SaveData();
 	}
 
 	public void onItsTimeToLoadCustomWorlds() {
@@ -120,5 +122,25 @@ public class PluginMultiWorld extends PluginBase {
 
 	public Logger getLogger() {
 		return logger;
+	}
+
+	public MC_Server getServer() {
+		return this.server;
+	}
+
+	public WorldManager getWorldManager() {
+		return this.worldManager;
+	}
+
+	public StorageManager getStorageManager() {
+		return this.storageManager;
+	}
+
+	public HookManager getHookManager() {
+		return this.hookManager;
+	}
+
+	public MultiInventoryManager getMultiInventoryManager() {
+		return this.multiInventoryManager;
 	}
 }
