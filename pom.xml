@@ -42,14 +42,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <minecraft.version>1.9</minecraft.version>
+        <minecraft.version>1.9.1</minecraft.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.projectrainbow</groupId>
             <artifactId>rainbow</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.9.1-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -226,7 +226,7 @@
                             <outputDirectory>
                                 ${project.build.directory}
                             </outputDirectory>
-                            <md5>ff68834eee875bcf367422c67673207c</md5>
+                            <md5>9e1d0d3b698f530a47699041b4e344ad</md5>
                         </configuration>
                     </execution>
                 </executions>
