@@ -443,7 +443,7 @@ public class MainCommand implements MC_Command {
 
     @Override
     public boolean hasPermissionToUse(MC_Player player) {
-        return player.hasPermission("multiworld.admin");
+        return player == null || player.hasPermission("multiworld.admin");
     }
 
     @Override
