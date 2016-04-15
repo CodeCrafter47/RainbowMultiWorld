@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.projectrainbow</groupId>
             <artifactId>rainbow</artifactId>
-            <version>1.9.1-SNAPSHOT</version>
+            <version>${minecraft.version}-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -295,6 +295,9 @@
                             <remappedDependencies>
                                 <remappedDependency>
                                     codecrafter47.multiworld:minecraft-server:${minecraft.version}:jar
+                                </remappedDependency>
+                                <remappedDependency>
+                                    org.projectrainbow:rainbow:${minecraft.version}-SNAPSHOT:jar
                                 </remappedDependency>
                             </remappedDependencies>
                         </configuration>

@@ -15,6 +15,7 @@
     "MixinNetHandlerPlayServer",
     "MixinPlayerList",
     "MixinWorldServer",
-    "MixinCommandDefaultGameMode"
+    "MixinCommandDefaultGameMode",
+    "MixinServerWrapper"
   ]
 }
