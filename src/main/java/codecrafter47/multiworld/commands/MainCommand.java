@@ -9,10 +9,10 @@ import PluginReference.MC_WorldSettings;
 import PluginReference.RainbowUtils;
 import codecrafter47.multiworld.PluginMultiWorld;
 import codecrafter47.multiworld._WorldMaster;
-import codecrafter47.multiworld.api.ChatPlayer;
+import codecrafter47.multiworld.ChatPlayer;
 import codecrafter47.multiworld.api.Environment;
 import codecrafter47.multiworld.api.GenerationType;
-import codecrafter47.multiworld.api.WorldConfiguration;
+import codecrafter47.multiworld.WorldConfiguration;
 import codecrafter47.multiworld.manager.WorldManager;
 import codecrafter47.multiworld.util.AlignmentHelper;
 import codecrafter47.multiworld.util.ChatUtil;
@@ -152,8 +152,8 @@ public class MainCommand implements MC_Command {
         }
     }
 
-    private MC_World getWorldByName(String name) {
-        for (MC_World world : plugin.getServer().getWorlds()) {
+    public static MC_World getWorldByName(String name) {
+        for (MC_World world : PluginMultiWorld.getInstance().getServer().getWorlds()) {
             if (world.getName().equals(name)) return world;
         }
         throw new RuntimeException("World " + name + " does not exist!");

@@ -3,17 +3,14 @@ package codecrafter47.multiworld.mixins;
 import PluginReference.MC_World;
 import codecrafter47.multiworld.PluginMultiWorld;
 import codecrafter47.multiworld.api.Environment;
-import codecrafter47.multiworld.api.WorldConfiguration;
-import net.minecraft.entity.Entity;
+import codecrafter47.multiworld.WorldConfiguration;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.server.SPacketRespawn;
-import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(NetHandlerPlayServer.class)
 public class MixinNetHandlerPlayServer {

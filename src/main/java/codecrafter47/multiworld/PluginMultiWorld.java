@@ -4,21 +4,27 @@ import PluginReference.MC_Player;
 import PluginReference.MC_Server;
 import PluginReference.PluginBase;
 import PluginReference.PluginInfo;
+import codecrafter47.multiworld.api.MultiWorldAPI;
+import codecrafter47.multiworld.api.WorldBuilder;
 import codecrafter47.multiworld.commands.MainCommand;
 import codecrafter47.multiworld.commands.TPCommand;
 import codecrafter47.multiworld.manager.HookManager;
 import codecrafter47.multiworld.manager.MultiInventoryManager;
 import codecrafter47.multiworld.manager.StorageManager;
 import codecrafter47.multiworld.manager.WorldManager;
+import com.google.common.base.Function;
 import joebkt._WorldRegistration;
 import lombok.SneakyThrows;
 import net.minecraft.command.ServerCommandManager;
+import net.minecraft.launchwrapper.Launch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.projectrainbow._DiwUtils;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
@@ -48,7 +54,20 @@ public class PluginMultiWorld extends PluginBase {
 	@Override public void onStartup(MC_Server argServer) {
 		instance = this;
 
-		getDataFolder().mkdirs();
+        try {
+            Field wb = Class.forName("codecrafter47.multiworld.api.MultiWorldAPI").getDeclaredField("wb");
+            wb.setAccessible(true);
+            wb.set(null, new MultiWorldAPI.F() {
+                @Override
+                public WorldBuilder apply(String s) {
+                    return new CustomWorldBuilder(s);
+                }
+            });
+        } catch (NoSuchFieldException | ClassNotFoundException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        getDataFolder().mkdirs();
 
 		server = argServer;
 

@@ -1,7 +1,7 @@
 package codecrafter47.multiworld.manager;
 
 import codecrafter47.multiworld.PluginMultiWorld;
-import codecrafter47.multiworld.api.WorldConfiguration;
+import codecrafter47.multiworld.WorldConfiguration;
 import codecrafter47.multiworld.util.DifficultyTypeAdapter;
 import codecrafter47.multiworld.util.GameTypeTypeAdapter;
 import com.google.gson.Gson;

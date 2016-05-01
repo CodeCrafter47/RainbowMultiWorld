@@ -2,7 +2,7 @@ package codecrafter47.multiworld.mixins;
 
 import codecrafter47.multiworld.CustomWorldServer;
 import codecrafter47.multiworld.PluginMultiWorld;
-import codecrafter47.multiworld.api.WorldConfiguration;
+import codecrafter47.multiworld.WorldConfiguration;
 import codecrafter47.multiworld.manager.StorageManager;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandDifficulty;

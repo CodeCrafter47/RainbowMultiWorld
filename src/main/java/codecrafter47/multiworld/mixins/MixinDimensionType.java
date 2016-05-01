@@ -3,7 +3,7 @@ package codecrafter47.multiworld.mixins;
 import codecrafter47.multiworld.CustomWorldProvider;
 import codecrafter47.multiworld.PluginMultiWorld;
 import codecrafter47.multiworld.api.GenerationType;
-import codecrafter47.multiworld.api.WorldConfiguration;
+import codecrafter47.multiworld.WorldConfiguration;
 import codecrafter47.multiworld.manager.StorageManager;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;

@@ -2,7 +2,6 @@ package codecrafter47.multiworld;
 
 import codecrafter47.multiworld.api.Environment;
 import codecrafter47.multiworld.api.GenerationType;
-import codecrafter47.multiworld.api.WorldConfiguration;
 import codecrafter47.multiworld.manager.StorageManager;
 import com.google.common.collect.BiMap;
 import joebkt._WorldRegistration;

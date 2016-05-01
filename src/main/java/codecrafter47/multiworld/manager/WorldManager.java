@@ -5,13 +5,12 @@ import PluginReference.MC_World;
 import PluginReference.MC_WorldLevelType;
 import codecrafter47.multiworld.CustomWorldServer;
 import codecrafter47.multiworld.PluginMultiWorld;
-import codecrafter47.multiworld.api.WorldConfiguration;
+import codecrafter47.multiworld.WorldConfiguration;
 import codecrafter47.multiworld._WorldMaster;
 import joebkt._WorldRegistration;
 import lombok.SneakyThrows;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
@@ -19,7 +18,6 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import org.projectrainbow._DiwUtils;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 

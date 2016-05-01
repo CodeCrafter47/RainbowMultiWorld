@@ -4,6 +4,7 @@ import PluginReference.MC_World;
 import PluginReference.PluginInfo;
 import codecrafter47.multiworld.CustomWorldServer;
 import codecrafter47.multiworld.PluginMultiWorld;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketTimeUpdate;
 import net.minecraft.server.MinecraftServer;
@@ -34,6 +35,7 @@ public class MixinMinecraftServer {
 
     @Inject(method = "loadAllWorlds", at = @At("RETURN"))
     private void onWorldsLoaded(String var1, String var2, long var3, WorldType var5, String var6, CallbackInfo ci) {
+        Launch.classLoader.addClassLoaderExclusion("codecrafter47.multiworld.api.");
         PluginMultiWorld pluginMultiWorld = new PluginMultiWorld();
         pluginMultiWorld.onStartup(ServerWrapper.getInstance());
         PluginInfo pluginInfo = pluginMultiWorld.getPluginInfo();

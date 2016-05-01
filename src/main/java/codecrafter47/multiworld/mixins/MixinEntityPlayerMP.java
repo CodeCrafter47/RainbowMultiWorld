@@ -2,7 +2,7 @@ package codecrafter47.multiworld.mixins;
 
 import codecrafter47.multiworld.CustomWorldServer;
 import codecrafter47.multiworld.PluginMultiWorld;
-import codecrafter47.multiworld.api.ChatPlayer;
+import codecrafter47.multiworld.ChatPlayer;
 import com.mojang.authlib.GameProfile;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;

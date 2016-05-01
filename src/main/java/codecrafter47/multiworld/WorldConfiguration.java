@@ -1,5 +1,7 @@
-package codecrafter47.multiworld.api;
+package codecrafter47.multiworld;
 
+import codecrafter47.multiworld.api.Environment;
+import codecrafter47.multiworld.api.GenerationType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.WorldSettings;
@@ -203,6 +205,6 @@ public class WorldConfiguration {
     }
 
     public String toString() {
-        return "codecrafter47.multiworld.api.WorldConfiguration(generationType=" + this.generationType + ", spawnMonsters=" + this.spawnMonsters + ", spawnAnimals=" + this.spawnAnimals + ", worldGeneratorOptions=" + this.worldGeneratorOptions + ", loadOnStartup=" + this.loadOnStartup + ", keepSpawnInMemory=" + this.keepSpawnInMemory + ", gameMode=" + this.gameMode + ", difficulty=" + this.difficulty + ", environment=" + this.environment + ", spawn=" + this.spawn + ", respawnWorld=" + this.respawnWorld + ", netherPortalTarget=" + this.netherPortalTarget + ", endPortalTarget=" + this.endPortalTarget + ")";
+        return "codecrafter47.multiworld.WorldConfiguration(generationType=" + this.generationType + ", spawnMonsters=" + this.spawnMonsters + ", spawnAnimals=" + this.spawnAnimals + ", worldGeneratorOptions=" + this.worldGeneratorOptions + ", loadOnStartup=" + this.loadOnStartup + ", keepSpawnInMemory=" + this.keepSpawnInMemory + ", gameMode=" + this.gameMode + ", difficulty=" + this.difficulty + ", environment=" + this.environment + ", spawn=" + this.spawn + ", respawnWorld=" + this.respawnWorld + ", netherPortalTarget=" + this.netherPortalTarget + ", endPortalTarget=" + this.endPortalTarget + ")";
     }
 }

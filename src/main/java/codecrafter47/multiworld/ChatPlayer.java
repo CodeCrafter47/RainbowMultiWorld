@@ -1,4 +1,4 @@
-package codecrafter47.multiworld.api;
+package codecrafter47.multiworld;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 

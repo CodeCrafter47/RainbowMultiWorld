@@ -1,6 +1,6 @@
 {
   "package": "codecrafter47.multiworld.mixins",
-  "minVersion": "0.5.3-SNAPSHOT",
+  "minVersion": "0.5.3",
   "required": "true",
   "mixins": [
     "MixinBlockFire",
