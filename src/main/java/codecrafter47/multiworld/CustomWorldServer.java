@@ -173,4 +173,9 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
     public MC_World asMCWorld() {
         return (MC_World) this;
     }
+
+    @Override
+    public boolean deleteOnRestart() {
+        return _WorldMaster.UnregisterWorld(_WorldMaster.GetWorldNameFromDimension(worldId));
+    }
 }

@@ -37,4 +37,6 @@ public interface CustomWorld {
     void setEndPortalTarget(MC_World world);
 
     MC_World asMCWorld();
+
+    boolean deleteOnRestart();
 }
