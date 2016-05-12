@@ -114,7 +114,7 @@ public abstract class MixinEntity {
                 NBTTagCompound nbt = new NBTTagCompound();
                 ((Entity) (Object) this).writeToNBT(nbt);
                 nbt.removeTag("Dimension");
-                var16.readFromNBT(nbt);
+                var16.writeToNBT(nbt); // todo wrong name
                 var16.timeUntilPortal = ((Entity) (Object) this).timeUntilPortal;
                 if (var4.provider.getDimensionType().getId() == 1 && var1 == 1) {
                     BlockPos var8 = var5.getTopSolidOrLiquidBlock(var5.getSpawnPoint());

@@ -42,7 +42,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <minecraft.version>1.9.2</minecraft.version>
+        <minecraft.version>1.9.4</minecraft.version>
     </properties>
 
     <dependencies>
@@ -226,7 +226,7 @@
                             <outputDirectory>
                                 ${project.build.directory}
                             </outputDirectory>
-                            <md5>560d467028f17a70997151ed0053deb6</md5>
+                            <md5>292feb3085809e714da2ca75514b9d5b</md5>
                         </configuration>
                     </execution>
                 </executions>

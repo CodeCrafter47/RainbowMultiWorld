@@ -70,7 +70,7 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
 
     @Override
     protected IChunkProvider createChunkProvider() {
-        File worldDirectory = this.saveHandler.getWorldDirectory();
+        File worldDirectory = this.worldInfo.getWorldDirectory();
         File file = new File(worldDirectory, "DIM_" + getDimension());
         IChunkLoader var1 = new AnvilChunkLoader(file, dataFixer);
         return new ChunkProviderServer(this, var1, this.provider.createChunkGenerator());
