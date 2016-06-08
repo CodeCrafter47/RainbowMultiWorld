@@ -15,8 +15,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldSettings;
 import org.projectrainbow.EmptyItemStack;
 import org.projectrainbow.interfaces.IMixinEntityPlayerMP;
 
@@ -100,7 +100,7 @@ public class MultiInventoryManager {
                                     MC_GameMode.valueOf(plugin.getStorageManager().getCustomConfig(
                                             dimension).getGameMode().name()));
                         } else {
-                            WorldSettings.GameType gameType = ((WorldServer) player.getWorld()).getWorldInfo().getGameType();
+                            GameType gameType = ((WorldServer) player.getWorld()).getWorldInfo().getGameType();
                             ((EntityPlayerMP) player).setGameType(gameType);
                         }
                     }

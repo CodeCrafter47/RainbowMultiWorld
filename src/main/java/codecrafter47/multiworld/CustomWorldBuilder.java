@@ -11,7 +11,7 @@ import codecrafter47.multiworld.api.WorldBuilder;
 import codecrafter47.multiworld.commands.MainCommand;
 import codecrafter47.multiworld.manager.StorageManager;
 import com.google.common.base.Preconditions;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.GameType;
 import org.projectrainbow.PluginHelper;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -85,7 +85,7 @@ public class CustomWorldBuilder implements WorldBuilder {
         WorldConfiguration customConfig = storageManager.getCustomConfig(id);
         customConfig.setGenerationType(generationType);
         customConfig.setEnvironment(environment);
-        customConfig.setGameMode(((WorldSettings.GameType) (Object) PluginHelper.gamemodeMap.inverse().get(gameMode)));
+        customConfig.setGameMode(((GameType) (Object) PluginHelper.gamemodeMap.inverse().get(gameMode)));
         storageManager.saveData();
         PluginMultiWorld.getInstance().getWorldManager().loadWorld(id);
         return (CustomWorld) MainCommand.getWorldByName(name);

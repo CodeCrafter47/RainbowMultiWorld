@@ -3,20 +3,19 @@ package codecrafter47.multiworld.util;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.GameType;
 
 import java.io.IOException;
 
-public class GameTypeTypeAdapter extends TypeAdapter<WorldSettings.GameType> {
+public class GameTypeTypeAdapter extends TypeAdapter<GameType> {
     @Override
-    public void write(JsonWriter jsonWriter, WorldSettings.GameType gameType) throws IOException {
+    public void write(JsonWriter jsonWriter, GameType gameType) throws IOException {
         jsonWriter.value(gameType.toString());
     }
 
     @Override
-    public WorldSettings.GameType read(JsonReader jsonReader) throws IOException {
+    public GameType read(JsonReader jsonReader) throws IOException {
         String s = jsonReader.nextString();
-        return WorldSettings.GameType.valueOf(s);
+        return GameType.valueOf(s);
     }
 }

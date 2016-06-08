@@ -10,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketChangeGameState;
 import net.minecraft.network.play.server.SPacketEntityEffect;
-import net.minecraft.network.play.server.SPacketPlayerAbilities;
 import net.minecraft.network.play.server.SPacketRespawn;
 import net.minecraft.network.play.server.SPacketSetExperience;
 import net.minecraft.network.play.server.SPacketSpawnPosition;
@@ -18,6 +17,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.server.management.PlayerList;
+import net.minecraft.src.hb;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
@@ -53,7 +53,7 @@ public abstract class MixinPlayerList {
     private Map<UUID, EntityPlayerMP> uuidToPlayerMap;
 
     @Shadow
-    public abstract void func_187243_f(EntityPlayerMP var1);
+    public abstract void updatePermissionLevel(EntityPlayerMP var1);
 
     @Shadow
     public abstract void transferEntityToWorld(Entity var1, int var2, WorldServer var3, WorldServer var4);
@@ -90,11 +90,11 @@ public abstract class MixinPlayerList {
     @Overwrite
     public EntityPlayerMP recreatePlayerEntity(EntityPlayerMP oldPlayer, int newWorldId, boolean force) {
         int oldClientDimension = getDimensionByEnvironment(oldPlayer.dimension);
-        oldPlayer.getServerForPlayer().getEntityTracker().removePlayerFromTrackers(oldPlayer);
-        oldPlayer.getServerForPlayer().getEntityTracker().untrackEntity(oldPlayer);
-        oldPlayer.getServerForPlayer().getPlayerChunkManager().removePlayer(oldPlayer);
+        oldPlayer.getServerWorld().getEntityTracker().removePlayerFromTrackers(oldPlayer);
+        oldPlayer.getServerWorld().getEntityTracker().untrackEntity(oldPlayer);
+        oldPlayer.getServerWorld().getPlayerChunkMap().removePlayer(oldPlayer);
         this.playerEntityList.remove(oldPlayer);
-        this.mcServer.worldServerForDimension(oldPlayer.dimension).removePlayerEntityDangerously(oldPlayer);
+        this.mcServer.worldServerForDimension(oldPlayer.dimension).removeEntityDangerously(oldPlayer);
         BlockPos bedLocation = oldPlayer.getBedLocation();
         boolean var5 = oldPlayer.isSpawnForced();
         oldPlayer.dimension = newWorldId;
@@ -107,11 +107,11 @@ public abstract class MixinPlayerList {
 
         EntityPlayerMP newPlayer = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(oldPlayer.dimension), oldPlayer.getGameProfile(), (PlayerInteractionManager)interactManager);
         newPlayer.dimension = oldPlayer.dimension;
-        newPlayer.playerNetServerHandler = oldPlayer.playerNetServerHandler;
+        newPlayer.connection = oldPlayer.connection;
         newPlayer.clonePlayer(oldPlayer, force);
         newPlayer.setEntityId(oldPlayer.getEntityId());
         newPlayer.setCommandStats(oldPlayer);
-        newPlayer.func_184819_a(oldPlayer.getPrimaryHand());
+        newPlayer.setPrimaryHand(oldPlayer.getPrimaryHand());
         Iterator var8 = oldPlayer.getTags().iterator();
 
         while(var8.hasNext()) {
@@ -128,28 +128,28 @@ public abstract class MixinPlayerList {
                 newPlayer.setLocationAndAngles((double)((float)var11.getX() + 0.5F), (double)((float)var11.getY() + 0.1F), (double)((float)var11.getZ() + 0.5F), 0.0F, 0.0F);
                 newPlayer.setSpawnPoint(bedLocation, var5);
             } else {
-                newPlayer.playerNetServerHandler.sendPacket(new SPacketChangeGameState(0, 0.0F));
+                newPlayer.connection.sendPacket(new SPacketChangeGameState(0, 0.0F));
             }
         }
 
-        var10.getChunkProvider().func_186025_d((int)newPlayer.posX >> 4, (int)newPlayer.posZ >> 4);
+        var10.getChunkProvider().loadChunk((int)newPlayer.posX >> 4, (int)newPlayer.posZ >> 4);
 
-        while(!var10.func_184144_a(newPlayer, newPlayer.getEntityBoundingBox()).isEmpty() && newPlayer.posY < 256.0D) {
+        while(!var10.getCollisionBoxes(newPlayer, newPlayer.getEntityBoundingBox()).isEmpty() && newPlayer.posY < 256.0D) {
             newPlayer.setPosition(newPlayer.posX, newPlayer.posY + 1.0D, newPlayer.posZ);
         }
 
         int newClientDimension = getDimensionByEnvironment(newPlayer.dimension);
         if (oldClientDimension == newClientDimension) {
-            newPlayer.playerNetServerHandler.sendPacket(new SPacketRespawn((byte) (newClientDimension >= 0 ? -1 : 0), newPlayer.worldObj.getDifficulty(), newPlayer.worldObj.getWorldInfo().getTerrainType(), newPlayer.theItemInWorldManager.getGameType()));
+            newPlayer.connection.sendPacket(new SPacketRespawn((byte) (newClientDimension >= 0 ? -1 : 0), newPlayer.worldObj.getDifficulty(), newPlayer.worldObj.getWorldInfo().getTerrainType(), newPlayer.interactionManager.getGameType()));
         }
-        newPlayer.playerNetServerHandler.sendPacket(new SPacketRespawn(newClientDimension, newPlayer.worldObj.getDifficulty(), newPlayer.worldObj.getWorldInfo().getTerrainType(), newPlayer.theItemInWorldManager.getGameType()));
+        newPlayer.connection.sendPacket(new SPacketRespawn(newClientDimension, newPlayer.worldObj.getDifficulty(), newPlayer.worldObj.getWorldInfo().getTerrainType(), newPlayer.interactionManager.getGameType()));
         var11 = var10.getSpawnPoint();
-        newPlayer.playerNetServerHandler.setPlayerLocation(newPlayer.posX, newPlayer.posY, newPlayer.posZ, newPlayer.rotationYaw, newPlayer.rotationPitch);
-        newPlayer.playerNetServerHandler.sendPacket(new SPacketSpawnPosition(var11));
-        newPlayer.playerNetServerHandler.sendPacket(new SPacketSetExperience(newPlayer.experience, newPlayer.experienceTotal, newPlayer.experienceLevel));
+        newPlayer.connection.setPlayerLocation(newPlayer.posX, newPlayer.posY, newPlayer.posZ, newPlayer.rotationYaw, newPlayer.rotationPitch);
+        newPlayer.connection.sendPacket(new SPacketSpawnPosition(var11));
+        newPlayer.connection.sendPacket(new SPacketSetExperience(newPlayer.experience, newPlayer.experienceTotal, newPlayer.experienceLevel));
         this.updateTimeAndWeatherForPlayer(newPlayer, var10);
-        this.func_187243_f(newPlayer);
-        var10.getPlayerChunkManager().addPlayer(newPlayer);
+        this.updatePermissionLevel(newPlayer);
+        var10.getPlayerChunkMap().addPlayer(newPlayer);
         var10.spawnEntityInWorld(newPlayer);
         this.playerEntityList.add(newPlayer);
         this.uuidToPlayerMap.put(newPlayer.getUniqueID(), newPlayer);
@@ -203,7 +203,7 @@ public abstract class MixinPlayerList {
     }
 
     @Overwrite
-    public void func_187242_a(EntityPlayerMP var1, int var2) {
+    public void changePlayerDimension(EntityPlayerMP var1, int var2) {
         int var3 = var1.dimension;
         WorldServer var4 = this.mcServer.worldServerForDimension(var1.dimension);
         var1.dimension = var2;
@@ -211,24 +211,24 @@ public abstract class MixinPlayerList {
         int packetDimen = getDimensionByEnvironment(var2);
         int oldDimension = getDimensionByEnvironment(var3);
         if (oldDimension == packetDimen) {
-            var1.playerNetServerHandler.sendPacket(new SPacketRespawn((byte) (packetDimen >= 0 ? -1 : 0), var1.worldObj.getDifficulty(), var1.worldObj.getWorldInfo().getTerrainType(), var1.theItemInWorldManager.getGameType()));
+            var1.connection.sendPacket(new SPacketRespawn((byte) (packetDimen >= 0 ? -1 : 0), var1.worldObj.getDifficulty(), var1.worldObj.getWorldInfo().getTerrainType(), var1.interactionManager.getGameType()));
         }
-        var1.playerNetServerHandler.sendPacket(new SPacketRespawn(packetDimen, var1.worldObj.getDifficulty(), var1.worldObj.getWorldInfo().getTerrainType(), var1.theItemInWorldManager.getGameType()));
-        this.func_187243_f(var1);
-        var4.removePlayerEntityDangerously(var1);
+        var1.connection.sendPacket(new SPacketRespawn(packetDimen, var1.worldObj.getDifficulty(), var1.worldObj.getWorldInfo().getTerrainType(), var1.interactionManager.getGameType()));
+        this.updatePermissionLevel(var1);
+        var4.removeEntityDangerously(var1);
         var1.isDead = false;
         this.transferEntityToWorld(var1, var3, var4, var5);
         this.preparePlayer(var1, var4);
-        var1.playerNetServerHandler.setPlayerLocation(var1.posX, var1.posY, var1.posZ, var1.rotationYaw, var1.rotationPitch);
-        var1.theItemInWorldManager.setWorld(var5);
-        var1.playerNetServerHandler.sendPacket(new SPacketPlayerAbilities(var1.capabilities));
+        var1.connection.setPlayerLocation(var1.posX, var1.posY, var1.posZ, var1.rotationYaw, var1.rotationPitch);
+        var1.interactionManager.setWorld(var5);
+        var1.connection.sendPacket(new hb(var1.capabilities));
         this.updateTimeAndWeatherForPlayer(var1, var5);
         this.syncPlayerInventory(var1);
         Iterator var6 = var1.getActivePotionEffects().iterator();
 
         while (var6.hasNext()) {
             PotionEffect var7 = (PotionEffect) var6.next();
-            var1.playerNetServerHandler.sendPacket(new SPacketEntityEffect(var1.getEntityId(), var7));
+            var1.connection.sendPacket(new SPacketEntityEffect(var1.getEntityId(), var7));
         }
     }
 }

@@ -4,7 +4,7 @@ import codecrafter47.multiworld.api.Environment;
 import codecrafter47.multiworld.api.GenerationType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.GameType;
 
 /**
  * Created by florian on 23.11.14.
@@ -16,8 +16,8 @@ public class WorldConfiguration {
 	String worldGeneratorOptions = "";
 	boolean loadOnStartup = true;
 	boolean keepSpawnInMemory = true;
-	WorldSettings.GameType gameMode = WorldSettings.GameType.SURVIVAL;
-	EnumDifficulty difficulty = EnumDifficulty.NORMAL;
+    GameType gameMode = GameType.SURVIVAL;
+    EnumDifficulty difficulty = EnumDifficulty.NORMAL;
 	Environment environment = Environment.OVERWORLD;
 	BlockPos spawn = null;
 	int respawnWorld = 0;
@@ -51,7 +51,7 @@ public class WorldConfiguration {
         return this.keepSpawnInMemory;
     }
 
-    public WorldSettings.GameType getGameMode() {
+    public GameType getGameMode() {
         return this.gameMode;
     }
 
@@ -108,7 +108,7 @@ public class WorldConfiguration {
         this.keepSpawnInMemory = keepSpawnInMemory;
     }
 
-    public void setGameMode(WorldSettings.GameType gameMode) {
+    public void setGameMode(GameType gameMode) {
         this.gameMode = gameMode;
     }
 

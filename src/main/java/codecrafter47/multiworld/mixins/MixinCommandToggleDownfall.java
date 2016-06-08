@@ -16,6 +16,6 @@ public abstract class MixinCommandToggleDownfall extends CommandBase {
     public void execute(MinecraftServer var1, ICommandSender var2, String[] var3) throws CommandException {
         WorldInfo wi = var2.getEntityWorld().getWorldInfo();
         wi.setRaining(!wi.isRaining());
-        notifyOperators(var2, this, "commands.downfall.success", new Object[0]);
+        notifyCommandListener(var2, this, "commands.downfall.success");
     }
 }

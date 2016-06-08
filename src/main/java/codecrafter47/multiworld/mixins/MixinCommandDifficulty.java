@@ -27,7 +27,7 @@ public abstract class MixinCommandDifficulty extends CommandBase {
     @Overwrite
     public void execute(MinecraftServer var1, ICommandSender var2, String[] var3) throws CommandException {
         if(var3.length <= 0) {
-            throw new WrongUsageException("commands.difficulty.usage", new Object[0]);
+            throw new WrongUsageException("commands.difficulty.usage");
         } else {
             EnumDifficulty var4 = this.getDifficultyFromCommand(var3[0]);
             World world = var2.getEntityWorld();
@@ -40,7 +40,7 @@ public abstract class MixinCommandDifficulty extends CommandBase {
                 storageManager.saveData();
             }
 
-            notifyOperators(var2, this, "commands.difficulty.success", new Object[]{new TextComponentTranslation(var4.getDifficultyResourceKey(), new Object[0])});
+            notifyCommandListener(var2, this, "commands.difficulty.success", new TextComponentTranslation(var4.getDifficultyResourceKey(), new Object[0]));
         }
     }
 }

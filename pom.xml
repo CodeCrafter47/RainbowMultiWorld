@@ -42,7 +42,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <minecraft.version>1.9.4</minecraft.version>
+        <minecraft.version>1.10</minecraft.version>
     </properties>
 
     <dependencies>
@@ -226,7 +226,7 @@
                             <outputDirectory>
                                 ${project.build.directory}
                             </outputDirectory>
-                            <md5>292feb3085809e714da2ca75514b9d5b</md5>
+                            <md5>deb46093d99440d249b6065887403ec8</md5>
                         </configuration>
                     </execution>
                 </executions>
@@ -255,7 +255,7 @@
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>specialsource-maven-plugin</artifactId>
-                <version>1.2.1-CodeCrafter47-4-SNAPSHOT</version>
+                <version>1.2.1-CodeCrafter47-5-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>initialize</phase>

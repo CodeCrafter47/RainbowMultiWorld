@@ -7,12 +7,12 @@ import PluginReference.MC_WorldBiomeType;
 import PluginReference.MC_WorldLevelType;
 import PluginReference.MC_WorldSettings;
 import PluginReference.RainbowUtils;
-import codecrafter47.multiworld.PluginMultiWorld;
-import codecrafter47.multiworld._WorldMaster;
 import codecrafter47.multiworld.ChatPlayer;
+import codecrafter47.multiworld.PluginMultiWorld;
+import codecrafter47.multiworld.WorldConfiguration;
+import codecrafter47.multiworld._WorldMaster;
 import codecrafter47.multiworld.api.Environment;
 import codecrafter47.multiworld.api.GenerationType;
-import codecrafter47.multiworld.WorldConfiguration;
 import codecrafter47.multiworld.manager.WorldManager;
 import codecrafter47.multiworld.util.AlignmentHelper;
 import codecrafter47.multiworld.util.ChatUtil;
@@ -27,7 +27,7 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.GameType;
 import org.projectrainbow._DiwUtils;
 
 import java.util.ArrayList;
@@ -211,11 +211,11 @@ public class MainCommand implements MC_Command {
                 break;
             case "gamemode":
                 if (customWorld) {
-                    configuration.setGameMode(WorldSettings.GameType.valueOf(value));
+                    configuration.setGameMode(GameType.valueOf(value));
                     plugin.getStorageManager().saveData();
                 }
                 if (plugin.getWorldManager().isLoaded(id))
-                    _DiwUtils.getMinecraftServer().worldServerForDimension(id).getWorldInfo().setGameType(WorldSettings.GameType.valueOf(value));
+                    _DiwUtils.getMinecraftServer().worldServerForDimension(id).getWorldInfo().setGameType(GameType.valueOf(value));
                 break;
             case "difficulty":
                 if (customWorld) {
@@ -710,14 +710,14 @@ public class MainCommand implements MC_Command {
         }
         // GAMEMODE
         text = text(textColor, "Game Mode: ");
-        WorldSettings.GameType current = null;
+        GameType current = null;
         if (customWorld) {
             current = configuration.getGameMode();
         } else {
             current = _DiwUtils.getMinecraftServer().worldServerForDimension(id).getWorldInfo().getGameType();
         }
-        for (WorldSettings.GameType type : WorldSettings.GameType.values()) {
-            if (type == WorldSettings.GameType.NOT_SET) {
+        for (GameType type : GameType.values()) {
+            if (type == GameType.NOT_SET) {
                 continue;
             }
             if (type == current) {

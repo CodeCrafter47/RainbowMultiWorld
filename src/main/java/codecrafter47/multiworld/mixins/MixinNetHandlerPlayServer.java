@@ -2,8 +2,8 @@ package codecrafter47.multiworld.mixins;
 
 import PluginReference.MC_World;
 import codecrafter47.multiworld.PluginMultiWorld;
-import codecrafter47.multiworld.api.Environment;
 import codecrafter47.multiworld.WorldConfiguration;
+import codecrafter47.multiworld.api.Environment;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.server.SPacketRespawn;
@@ -30,12 +30,12 @@ public class MixinNetHandlerPlayServer {
         return respawnDimension;
     }
 
-    @ModifyArg(method = "handleSpectate", at = @At(value = "INVOKE", target = "net/minecraft/network/play/server/SPacketRespawn.<init>(ILnet/minecraft/world/EnumDifficulty;Lnet/minecraft/world/WorldType;Lnet/minecraft/world/WorldSettings$GameType;)V"))
+    @ModifyArg(method = "handleSpectate", at = @At(value = "INVOKE", target = "net/minecraft/network/play/server/SPacketRespawn.<init>(ILnet/minecraft/world/EnumDifficulty;Lnet/minecraft/world/WorldType;Lnet/minecraft/world/GameType;)V"))
     private int onSpectate(int dimension) {
         dimension = getDimensionByEnvironment(dimension);
         int oldClientDimension = getDimensionByEnvironment(((MC_World)playerEntity.worldObj).getDimension());
         if (oldClientDimension == dimension) {
-             playerEntity.playerNetServerHandler.sendPacket(new SPacketRespawn((byte) (dimension >= 0 ? -1 : 0), playerEntity.worldObj.getDifficulty(), playerEntity.worldObj.getWorldInfo().getTerrainType(), playerEntity.theItemInWorldManager.getGameType()));
+            playerEntity.connection.sendPacket(new SPacketRespawn((byte) (dimension >= 0 ? -1 : 0), playerEntity.worldObj.getDifficulty(), playerEntity.worldObj.getWorldInfo().getTerrainType(), playerEntity.interactionManager.getGameType()));
         }
         return dimension;
     }

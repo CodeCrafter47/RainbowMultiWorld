@@ -10,11 +10,11 @@ import codecrafter47.multiworld.manager.StorageManager;
 import lombok.Getter;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.pe;
 import net.minecraft.util.datafix.DataFixer;
-import net.minecraft.util.datafix.DataFixesManager;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.IChunkLoader;
@@ -29,7 +29,7 @@ import java.io.File;
 @Getter
 public class CustomWorldServer extends WorldServer implements CustomWorld {
     private final int worldId;
-    private static DataFixer dataFixer = DataFixesManager.func_188279_a();
+    private static DataFixer dataFixer = pe.a();
     private static int staticId;
 
     private WorldConfiguration getWC() {
@@ -70,7 +70,7 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
 
     @Override
     protected IChunkProvider createChunkProvider() {
-        File worldDirectory = this.worldInfo.getWorldDirectory();
+        File worldDirectory = this.saveHandler.getWorldDirectory();
         File file = new File(worldDirectory, "DIM_" + getDimension());
         IChunkLoader var1 = new AnvilChunkLoader(file, dataFixer);
         return new ChunkProviderServer(this, var1, this.provider.createChunkGenerator());
@@ -113,9 +113,9 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
 
     @Override
     public void setGameMode(MC_GameMode gameMode) {
-        getWC().setGameMode((WorldSettings.GameType) (Object) PluginHelper.gamemodeMap.inverse().get(gameMode));
+        getWC().setGameMode((GameType) (Object) PluginHelper.gamemodeMap.inverse().get(gameMode));
         PluginMultiWorld.getInstance().getStorageManager().saveData();
-        getWorldInfo().setGameType((WorldSettings.GameType) (Object) PluginHelper.gamemodeMap.inverse().get(gameMode));
+        getWorldInfo().setGameType((GameType) (Object) PluginHelper.gamemodeMap.inverse().get(gameMode));
     }
 
     @Override

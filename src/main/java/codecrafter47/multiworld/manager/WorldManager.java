@@ -11,6 +11,7 @@ import joebkt._WorldRegistration;
 import lombok.SneakyThrows;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ServerWorldEventHandler;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
@@ -41,7 +42,7 @@ public class WorldManager {
 		ISaveHandler dataManager = server.getActiveAnvilConverter().getSaveLoader(fileWorldName, true);
 		WorldType tgtLevelType = translateLevelType(entry.settings.levelType);
 		WorldSettings ws = new WorldSettings(entry.settings.seed, configuration.getGameMode(), entry.settings.generateStructures, server.isHardcore(), tgtLevelType);
-		ws.setWorldName(configuration.getWorldGeneratorOptions());
+		ws.setGeneratorOptions(configuration.getWorldGeneratorOptions());
 		WorldInfo worldData = dataManager.loadWorldInfo();
 		if (worldData == null) {
 			worldData = new WorldInfo(ws, fileWorldName);
@@ -79,7 +80,7 @@ public class WorldManager {
 
 		myWorld.initialize(ws);
 
-		myWorld.addWorldAccess(new net.minecraft.world.WorldManager(server, myWorld));
+		myWorld.addEventListener(new ServerWorldEventHandler(server, myWorld));
 
 		myWorld.setAllowedSpawnTypes(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
 
@@ -111,7 +112,7 @@ public class WorldManager {
                 }
 
                 ++var5;
-                var7.getChunkProvider().func_186025_d(var8.getX() + var11 >> 4, var8.getZ() + var12 >> 4);
+                var7.getChunkProvider().loadChunk(var8.getX() + var11 >> 4, var8.getZ() + var12 >> 4);
             }
         }
     }

@@ -9,7 +9,7 @@ import net.minecraft.init.Biomes;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
 import net.minecraft.world.gen.FlatGeneratorInfo;
@@ -38,23 +38,23 @@ public class CustomWorldProvider extends WorldProvider {
     }
 
     @Override
-    protected void registerWorldChunkManager() {
+    protected void createBiomeProvider() {
         WorldType var1 = this.worldObj.getWorldInfo().getTerrainType();
         if(var1 == WorldType.FLAT) {
             FlatGeneratorInfo var2 = FlatGeneratorInfo.createFlatGeneratorFromString(this.worldObj.getWorldInfo().getGeneratorOptions());
-            this.worldChunkMgr = new BiomeProviderSingle(BiomeGenBase.getBiomeFromBiomeList(var2.getBiome(), Biomes.DEFAULT));
+            this.biomeProvider = new BiomeProviderSingle(Biome.getBiome(var2.getBiome(), Biomes.DEFAULT));
         } else {
             GenerationType generationType = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(this.worldId).getGenerationType();
             PluginMultiWorld.getInstance().getLogger().info("Injecting generationType into " + this.worldId + ": " + generationType.name());
             if (generationType == GenerationType.SINGLE_BIOME) {
                 _WorldRegistration entry1 = _WorldMaster.GetRegistrationFromDimension(this.worldId);
                 if (entry1 != null) {
-                    this.worldChunkMgr = new BiomeProviderSingle((BiomeGenBase) ((BiMap<Object, Object>) (Object) PluginHelper.biomeMap).inverse().get(entry1.settings.biomeType));
+                    this.biomeProvider = new BiomeProviderSingle((Biome) ((BiMap<Object, Object>) (Object) PluginHelper.biomeMap).inverse().get(entry1.settings.biomeType));
                 } else {
-                    this.worldChunkMgr = new BiomeProvider(this.worldObj.getWorldInfo());
+                    this.biomeProvider = new BiomeProvider(this.worldObj.getWorldInfo());
                 }
             } else if (generationType == GenerationType.OVERWORLD) {
-                this.worldChunkMgr = new BiomeProvider(this.worldObj.getWorldInfo());
+                this.biomeProvider = new BiomeProvider(this.worldObj.getWorldInfo());
             } else {
                 PluginMultiWorld.getInstance().getLogger().info("ERROR: This should not happen.");
             }
@@ -68,7 +68,7 @@ public class CustomWorldProvider extends WorldProvider {
     }
 
     @Override
-    public boolean func_186056_c(int var1, int var2) {
+    public boolean canCoordinateBeSpawn(int var1, int var2) {
         StorageManager storageManager = PluginMultiWorld.getInstance().getStorageManager();
         WorldConfiguration customConfig = storageManager.getCustomConfig(worldId);
         return !(customConfig.isKeepSpawnInMemory() && this.worldObj.isSpawnChunk(var1, var2));

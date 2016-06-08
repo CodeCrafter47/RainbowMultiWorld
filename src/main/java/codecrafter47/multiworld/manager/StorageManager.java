@@ -7,7 +7,7 @@ import codecrafter47.multiworld.util.GameTypeTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.GameType;
 
 import java.io.File;
 import java.io.FileReader;
@@ -22,7 +22,7 @@ public class StorageManager {
 	private PluginMultiWorld plugin;
 	private Gson gson = new GsonBuilder()
 			.registerTypeAdapter(EnumDifficulty.class, new DifficultyTypeAdapter())
-			.registerTypeAdapter(WorldSettings.GameType.class, new GameTypeTypeAdapter())
+			.registerTypeAdapter(GameType.class, new GameTypeTypeAdapter())
 			.setPrettyPrinting().create();
 
 	private HashMap<Integer, WorldConfiguration> worldData = new HashMap<>();

@@ -27,11 +27,11 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class MixinEntityPlayerMP extends EntityPlayer implements ICommandSender, ChatPlayer {
 
     @Shadow
-    private boolean field_184851_cj;
+    private boolean invulnerableDimensionChange;
     @Shadow
     public boolean playerConqueredTheEnd;
     @Shadow
-    public NetHandlerPlayServer playerNetServerHandler;
+    public NetHandlerPlayServer connection;
     @Shadow
     @Final
     public MinecraftServer mcServer;
@@ -66,26 +66,26 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer implements IComma
                 }
             }
         }
-        this.field_184851_cj = true;
+        this.invulnerableDimensionChange = true;
         if (this.worldObj.provider.getDimensionType().getId() == 1 && var1 == 1) {
             this.worldObj.removeEntity(this);
             if (!this.playerConqueredTheEnd) {
                 this.playerConqueredTheEnd = true;
-                if (this.func_189102_a(AchievementList.field_187971_D)) {
-                    this.playerNetServerHandler.sendPacket(new SPacketChangeGameState(4, 0.0F));
+                if (this.hasAchievement(AchievementList.THE_END2)) {
+                    this.connection.sendPacket(new SPacketChangeGameState(4, 0.0F));
                 } else {
-                    this.triggerAchievement(AchievementList.field_187971_D);
-                    this.playerNetServerHandler.sendPacket(new SPacketChangeGameState(4, 1.0F));
+                    this.addStat(AchievementList.THE_END2);
+                    this.connection.sendPacket(new SPacketChangeGameState(4, 1.0F));
                 }
             }
 
             return this;
         } else {
             if (this.worldObj.provider.getDimensionType().getId() == 0 && var1 == 1) {
-                this.triggerAchievement(AchievementList.theEnd);
+                this.addStat(AchievementList.THE_END);
                 var1 = 1;
             } else {
-                this.triggerAchievement(AchievementList.field_187997_y);
+                this.addStat(AchievementList.PORTAL);
             }
 
             if (this.worldObj instanceof CustomWorldServer) {
@@ -104,8 +104,8 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer implements IComma
                 }
             }
 
-            this.mcServer.getPlayerList().func_187242_a((EntityPlayerMP) (Object) this, var1);
-            this.playerNetServerHandler.sendPacket(new SPacketEffect(1032, BlockPos.ORIGIN, 0, false));
+            this.mcServer.getPlayerList().changePlayerDimension((EntityPlayerMP) (Object) this, var1);
+            this.connection.sendPacket(new SPacketEffect(1032, BlockPos.ORIGIN, 0, false));
             this.lastExperience = -1;
             this.lastHealth = -1.0F;
             this.lastFoodLevel = -1;

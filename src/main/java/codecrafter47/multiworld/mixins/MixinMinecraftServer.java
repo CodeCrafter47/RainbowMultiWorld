@@ -6,11 +6,11 @@ import codecrafter47.multiworld.CustomWorldServer;
 import codecrafter47.multiworld.PluginMultiWorld;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.SPacketTimeUpdate;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
+import net.minecraft.src.ia;
+import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import org.projectrainbow.ServerWrapper;
 import org.projectrainbow._DiwUtils;
@@ -31,7 +31,7 @@ public class MixinMinecraftServer {
     private int tickCounter;
 
     @Shadow
-    private PlayerList serverConfigManager;
+    private PlayerList playerList;
 
     @Inject(method = "loadAllWorlds", at = @At("RETURN"))
     private void onWorldsLoaded(String var1, String var2, long var3, WorldType var5, String var6, CallbackInfo ci) {
@@ -53,7 +53,7 @@ public class MixinMinecraftServer {
     private void updateTime(CallbackInfo ci) {
         if (this.tickCounter % 20 == 0) {
             for (WorldServer worldServer : worldServers) {
-                this.serverConfigManager.sendPacketToAllPlayersInDimension(new SPacketTimeUpdate(worldServer.getTotalWorldTime(), worldServer.getWorldTime(), worldServer.getGameRules().getBoolean("doDaylightCycle")), ((MC_World) worldServer).getDimension());
+                this.playerList.sendPacketToAllPlayersInDimension(new ia(worldServer.getTotalWorldTime(), worldServer.getWorldTime(), worldServer.getGameRules().getBoolean("doDaylightCycle")), ((MC_World) worldServer).getDimension());
             }
         }
     }
@@ -76,7 +76,7 @@ public class MixinMinecraftServer {
     }
 
     @Overwrite
-    public void setGameType(WorldSettings.GameType var1) {
+    public void setGameType(GameType var1) {
         for(int var2 = 0; var2 < 3; ++var2) {
             this.worldServers[var2].getWorldInfo().setGameType(var1);
         }
