@@ -1,10 +1,6 @@
 package codecrafter47.multiworld.manager;
 
-import PluginReference.MC_GameMode;
-import PluginReference.MC_ItemStack;
-import PluginReference.MC_Player;
-import PluginReference.MC_PotionEffect;
-import PluginReference.MC_World;
+import PluginReference.*;
 import codecrafter47.multiworld.PluginMultiWorld;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,18 +13,12 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
-import org.projectrainbow.EmptyItemStack;
 import org.projectrainbow.interfaces.IMixinEntityPlayerMP;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by florian on 13.12.14.
@@ -272,10 +262,8 @@ public class MultiInventoryManager {
     }
 
     private String itemstackToString(MC_ItemStack itemStack) {
-        if (itemStack == null || itemStack instanceof EmptyItemStack)
-            return "";
         ItemStack stack = (ItemStack) (Object) itemStack;
-        if (stack == null)
+        if (stack == null || stack.isEmpty())
             return "";
         return stack.writeToNBT(new NBTTagCompound()).toString();
     }
@@ -284,7 +272,7 @@ public class MultiInventoryManager {
     private MC_ItemStack stringToItemStack(String str) {
         if (str == null || str.isEmpty())
             return null;
-        return (MC_ItemStack) (Object) ItemStack.loadItemStackFromNBT(JsonToNBT.getTagFromJson(str));
+        return (MC_ItemStack) (Object) new ItemStack(JsonToNBT.getTagFromJson(str));
     }
 
     private MC_World getWorldByName(String name) {

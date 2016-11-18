@@ -10,8 +10,6 @@ import codecrafter47.multiworld.manager.StorageManager;
 import lombok.Getter;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.pe;
-import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
@@ -29,7 +27,6 @@ import java.io.File;
 @Getter
 public class CustomWorldServer extends WorldServer implements CustomWorld {
     private final int worldId;
-    private static DataFixer dataFixer = pe.a();
     private static int staticId;
 
     private WorldConfiguration getWC() {
@@ -46,6 +43,9 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
         return this.worldId;
     }
 
+    /*
+     * This method overrides a method injected into the super class via mixin. It must not be removed.
+     */
     public int getClientDimension() {
         if (getDimension() > 1) {
             WorldConfiguration customConfig = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(worldId);
@@ -72,7 +72,7 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
     protected IChunkProvider createChunkProvider() {
         File worldDirectory = this.saveHandler.getWorldDirectory();
         File file = new File(worldDirectory, "DIM_" + getDimension());
-        IChunkLoader var1 = new AnvilChunkLoader(file, dataFixer);
+        IChunkLoader var1 = new AnvilChunkLoader(file, super.getMinecraftServer().getDataFixer());
         return new ChunkProviderServer(this, var1, this.provider.createChunkGenerator());
     }
 

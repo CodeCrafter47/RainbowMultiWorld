@@ -39,6 +39,7 @@ public class CustomWorldProvider extends WorldProvider {
 
     @Override
     protected void createBiomeProvider() {
+        this.f = true;
         WorldType var1 = this.worldObj.getWorldInfo().getTerrainType();
         if(var1 == WorldType.FLAT) {
             FlatGeneratorInfo var2 = FlatGeneratorInfo.createFlatGeneratorFromString(this.worldObj.getWorldInfo().getGeneratorOptions());
@@ -64,11 +65,11 @@ public class CustomWorldProvider extends WorldProvider {
     @Override
     public boolean getHasNoSky() {
         Environment environment = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(this.worldId).getEnvironment();
-        return environment == Environment.NETHER || environment == Environment.END;
+        return environment == Environment.END;
     }
 
     @Override
-    public boolean canCoordinateBeSpawn(int var1, int var2) {
+    public boolean canDropChunk(int var1, int var2) {
         StorageManager storageManager = PluginMultiWorld.getInstance().getStorageManager();
         WorldConfiguration customConfig = storageManager.getCustomConfig(worldId);
         return !(customConfig.isKeepSpawnInMemory() && this.worldObj.isSpawnChunk(var1, var2));

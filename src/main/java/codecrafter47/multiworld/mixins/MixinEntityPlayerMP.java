@@ -53,7 +53,7 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer implements IComma
 
     @Overwrite
     public Entity changeDimension(int var1) {
-        if (this.worldObj instanceof CustomWorldServer) {
+        if (this.world instanceof CustomWorldServer) {
             if (var1 == 1) {
                 int endPortalTarget = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(this.dimension).getEndPortalTarget();
                 if (endPortalTarget < -1) {
@@ -67,8 +67,8 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer implements IComma
             }
         }
         this.invulnerableDimensionChange = true;
-        if (this.worldObj.provider.getDimensionType().getId() == 1 && var1 == 1) {
-            this.worldObj.removeEntity(this);
+        if (this.world.provider.getDimensionType().getId() == 1 && var1 == 1) {
+            this.world.removeEntity(this);
             if (!this.playerConqueredTheEnd) {
                 this.playerConqueredTheEnd = true;
                 if (this.hasAchievement(AchievementList.THE_END2)) {
@@ -81,14 +81,14 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer implements IComma
 
             return this;
         } else {
-            if (this.worldObj.provider.getDimensionType().getId() == 0 && var1 == 1) {
+            if (this.world.provider.getDimensionType().getId() == 0 && var1 == 1) {
                 this.addStat(AchievementList.THE_END);
                 var1 = 1;
             } else {
                 this.addStat(AchievementList.PORTAL);
             }
 
-            if (this.worldObj instanceof CustomWorldServer) {
+            if (this.world instanceof CustomWorldServer) {
                 if (var1 == 1) {
                     int endPortalTarget = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(this.dimension).getEndPortalTarget();
                     if (endPortalTarget < -1) {

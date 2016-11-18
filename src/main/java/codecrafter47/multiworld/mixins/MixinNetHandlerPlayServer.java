@@ -33,9 +33,9 @@ public class MixinNetHandlerPlayServer {
     @ModifyArg(method = "handleSpectate", at = @At(value = "INVOKE", target = "net/minecraft/network/play/server/SPacketRespawn.<init>(ILnet/minecraft/world/EnumDifficulty;Lnet/minecraft/world/WorldType;Lnet/minecraft/world/GameType;)V"))
     private int onSpectate(int dimension) {
         dimension = getDimensionByEnvironment(dimension);
-        int oldClientDimension = getDimensionByEnvironment(((MC_World)playerEntity.worldObj).getDimension());
+        int oldClientDimension = getDimensionByEnvironment(((MC_World)playerEntity.world).getDimension());
         if (oldClientDimension == dimension) {
-            playerEntity.connection.sendPacket(new SPacketRespawn((byte) (dimension >= 0 ? -1 : 0), playerEntity.worldObj.getDifficulty(), playerEntity.worldObj.getWorldInfo().getTerrainType(), playerEntity.interactionManager.getGameType()));
+            playerEntity.connection.sendPacket(new SPacketRespawn((byte) (dimension >= 0 ? -1 : 0), playerEntity.world.getDifficulty(), playerEntity.world.getWorldInfo().getTerrainType(), playerEntity.interactionManager.getGameType()));
         }
         return dimension;
     }
