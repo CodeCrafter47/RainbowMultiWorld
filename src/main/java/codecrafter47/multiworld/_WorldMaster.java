@@ -34,8 +34,7 @@ public class _WorldMaster {
     public _WorldMaster() {}
 
     public static String GetWorldNameFromDimension(int dimenIdx) {
-        String res = (String) mapDimensionToWorldName.get(
-                Integer.valueOf(dimenIdx));
+        String res = (String) mapDimensionToWorldName.get(dimenIdx);
 
         return res != null ? res : "Dimension " + dimenIdx;
     }
@@ -79,22 +78,27 @@ public class _WorldMaster {
             g_nextWorldIdx = Integer.valueOf(3);
         }
 
-        mapDimensionToWorldName.put(Integer.valueOf(0), "world");
-        mapDimensionToWorldName.put(Integer.valueOf(-1), "world_nether");
-        mapDimensionToWorldName.put(Integer.valueOf(1), "world_the_end");
-        mapDimensionToWorldName.put(Integer.valueOf(2), "PlotWorld");
+        mapDimensionToWorldName.put(0, _DiwUtils.getMinecraftServer().getFolderName());
+        mapDimensionToWorldName.put(-1, _DiwUtils.getMinecraftServer().getFolderName() + "_nether");
+        mapDimensionToWorldName.put(1, _DiwUtils.getMinecraftServer().getFolderName() + "_end");
+        mapDimensionToWorldName.put(2, "PlotWorld");
         Iterator var1 = worldRegs.iterator();
 
         while (var1.hasNext()) {
             _WorldRegistration entry1 = (_WorldRegistration) var1.next();
             String name1 = entry1.name.toLowerCase();
 
-            mapWorldNameToDimensionIdx.put(name1,
-                    Integer.valueOf(entry1.dimension));
-            mapDimensionToWorldName.put(Integer.valueOf(entry1.dimension),
-                    entry1.name);
+            if (mapDimensionToWorldName.containsValue(entry1.name) || mapWorldNameToDimensionIdx.containsKey(name1)) {
+                _DiwUtils.ConsoleMsg(ChatColor.LIGHT_PURPLE + "--- Removed custom world \'" + entry1.name + "\' due to a name collision.");
+                var1.remove();
+            } else if (mapDimensionToWorldName.containsKey(entry1.dimension)) {
+                _DiwUtils.ConsoleMsg(ChatColor.LIGHT_PURPLE + "--- Removed custom world \'" + entry1.name + "\' due to a dimension id collision.");
+                var1.remove();
+            } else {
+                mapWorldNameToDimensionIdx.put(name1, entry1.dimension);
+                mapDimensionToWorldName.put(entry1.dimension, entry1.name);
+            }
         }
-
     }
 
     public static void SaveData() {

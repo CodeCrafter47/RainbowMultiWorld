@@ -28,7 +28,7 @@ public class CustomWorldBuilder implements WorldBuilder {
 
     public CustomWorldBuilder(String name) {
         this.name = name;
-        Preconditions.checkArgument(!_WorldMaster.mapDimensionToWorldName.values().contains(name), "A world with the requested name already exists.");
+        Preconditions.checkArgument(!_WorldMaster.mapDimensionToWorldName.values().contains(name) && !_WorldMaster.mapWorldNameToDimensionIdx.containsKey(name.toLowerCase()), "A world with the requested name already exists.");
     }
 
     @Override
