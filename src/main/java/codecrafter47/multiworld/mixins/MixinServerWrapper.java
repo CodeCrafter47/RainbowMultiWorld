@@ -9,12 +9,12 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(ServerWrapper.class)
 public class MixinServerWrapper {
 
-    @Overwrite
+    // No @Overwrite because the method is not obfuscated
     public boolean unregisterWorld(String worldName) {
         return _WorldMaster.UnregisterWorld(worldName);
     }
 
-    @Overwrite
+    // No @Overwrite because the method is not obfuscated
     public int registerWorld(String worldName, MC_WorldSettings settings) {
         return _WorldMaster.RegisterWorld(worldName, settings);
     }

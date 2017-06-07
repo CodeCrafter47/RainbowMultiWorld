@@ -15,12 +15,12 @@ import net.minecraft.server.MinecraftServer;
  */
 public class TPCommand extends CommandBase {
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "mwtp";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender iCommandSender) {
+    public String getUsage(ICommandSender iCommandSender) {
         return "/mvtp <player> <world>";
     }
 

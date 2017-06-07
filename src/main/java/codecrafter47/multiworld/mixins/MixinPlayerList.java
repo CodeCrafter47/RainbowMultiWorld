@@ -87,7 +87,7 @@ public abstract class MixinPlayerList {
     public EntityPlayerMP recreatePlayerEntity(EntityPlayerMP oldPlayer, int newWorldId, boolean force) {
         int oldClientDimension = getDimensionByEnvironment(oldPlayer.dimension);
         oldPlayer.getServerWorld().getEntityTracker().removePlayerFromTrackers(oldPlayer);
-        oldPlayer.getServerWorld().getEntityTracker().untrackEntity(oldPlayer);
+        oldPlayer.getServerWorld().getEntityTracker().untrack(oldPlayer);
         oldPlayer.getServerWorld().getPlayerChunkMap().removePlayer(oldPlayer);
         this.playerEntityList.remove(oldPlayer);
         this.mcServer.worldServerForDimension(oldPlayer.dimension).removeEntityDangerously(oldPlayer);
@@ -146,7 +146,7 @@ public abstract class MixinPlayerList {
         this.updateTimeAndWeatherForPlayer(newPlayer, var10);
         this.updatePermissionLevel(newPlayer);
         var10.getPlayerChunkMap().addPlayer(newPlayer);
-        var10.spawnEntityInWorld(newPlayer);
+        var10.spawnEntity(newPlayer);
         this.playerEntityList.add(newPlayer);
         this.uuidToPlayerMap.put(newPlayer.getUniqueID(), newPlayer);
         newPlayer.addSelfToInternalCraftingInventory();

@@ -25,7 +25,7 @@ public abstract class MixinCommandDefaultGameMode {
             storageManager.getCustomConfig(worldId).setGameMode(defaultGameType);
             storageManager.saveData();
             if (minecraftServer.getForceGamemode()) {
-                for (EntityPlayerMP entityPlayerMP : minecraftServer.getPlayerList().getPlayerList()) {
+                for (EntityPlayerMP entityPlayerMP : minecraftServer.getPlayerList().getPlayers()) {
                     if (entityPlayerMP.dimension == worldId) {
                         entityPlayerMP.setGameType(defaultGameType);
                     }
@@ -40,7 +40,7 @@ public abstract class MixinCommandDefaultGameMode {
     protected void setDefaultGameType(GameType var1, MinecraftServer var2) {
         var2.setGameType(var1);
         if (var2.getForceGamemode()) {
-            for (EntityPlayerMP var4 : var2.getPlayerList().getPlayerList()) {
+            for (EntityPlayerMP var4 : var2.getPlayerList().getPlayers()) {
                 if (var4.dimension < 2) {
                     var4.setGameType(var1);
                 }

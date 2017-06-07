@@ -6,7 +6,7 @@
 
     <groupId>codecrafter47</groupId>
     <artifactId>MultiWorld</artifactId>
-    <version>1.11.2-SNAPSHOT</version>
+    <version>1.12-SNAPSHOT</version>
 
     <repositories>
         <repository>
@@ -26,10 +26,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>codecrafter47-repo</id>
-            <url>http://nexus.codecrafter47.dyndns.eu/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <url>http://nexus.codecrafter47.de/content/repositories/public/</url>
         </pluginRepository>
         <pluginRepository>
             <id>sponge-repo</id>
@@ -42,14 +39,15 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <minecraft.version>1.11.2</minecraft.version>
+        <minecraft.version>1.12</minecraft.version>
+        <rainbow.version>1.12-SNAPSHOT</rainbow.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.projectrainbow</groupId>
             <artifactId>rainbow</artifactId>
-            <version>${minecraft.version}-SNAPSHOT</version>
+            <version>${rainbow.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -73,29 +71,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.14.8</version>
+            <version>1.16.12</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-chat</artifactId>
-            <version>1.9-SNAPSHOT</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.code.gson</groupId>
-                    <artifactId>gson</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>mixin</artifactId>
-            <version>0.5.3-SNAPSHOT</version>
+            <version>0.6.9-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -123,58 +105,26 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5</version>
                 <configuration>
+                    <compilerArgs>
+                        <compilerArg>-AdefaultObfuscationEnv=notch</compilerArg>
+                        <compilerArg>-AreobfNotchSrgFile=${project.basedir}/mapping-reverse.srg</compilerArg>
+                        <compilerArg>-AoutNotchSrgFile=${project.basedir}/target/mixin.srg</compilerArg>
+                        <compilerArg>-AoutRefMapFile=multiworld.mixin.refmap.json</compilerArg>
+                    </compilerArgs>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <annotationProcessors>
-                        <annotationProcessor>lombok.core.AnnotationProcessor</annotationProcessor>
-                    </annotationProcessors>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.1</version>
-            </plugin>
-            <!--
-            <plugin>
-                <groupId>net.md-5</groupId>
-                <artifactId>simulare</artifactId>
-                <version>0.1</version>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>transform</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.13</version>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <version>2.6</version>
                 <configuration>
-                    <ignores>
-                        <ignore>java.lang.Throwable</ignore>
-                    </ignores>
-                    <signature>
-                        <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java16</artifactId>
-                        <version>1.1</version>
-                    </signature>
+                    <forceCreation>true</forceCreation>
                 </configuration>
             </plugin>
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -186,12 +136,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <relocations>
-                                <relocation>
-                                    <pattern>net.md_5.bungee</pattern>
-                                    <shadedPattern>MultiWorld.libs.net.md_5.bungee</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -226,7 +170,7 @@
                             <outputDirectory>
                                 ${project.build.directory}
                             </outputDirectory>
-                            <md5>e576e5eb43cd176158917585200cb37d</md5>
+                            <md5>218513c2d5b0ec4b6db26801a3883ad1</md5>
                         </configuration>
                     </execution>
                 </executions>
@@ -255,7 +199,7 @@
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>specialsource-maven-plugin</artifactId>
-                <version>1.2.1-CodeCrafter47-5-SNAPSHOT</version>
+                <version>1.2.1-CodeCrafter47-6-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>initialize</phase>
@@ -276,7 +220,6 @@
                             </inJars>
                             <outputDirectory>${project.build.directory}
                             </outputDirectory>
-                            <skipDebug>true</skipDebug>
                         </configuration>
                     </execution>
                     <execution>
@@ -286,18 +229,14 @@
                             <goal>remap</goal>
                         </goals>
                         <configuration>
-                            <srgIn>${project.basedir}/mapping.srg
+                            <srgIn>${project.basedir}/mapping-reverse.srg
                             </srgIn>
-                            <reverse>true</reverse>
-                            <skipDebug>false</skipDebug>
-                            <copyResources>true</copyResources>
-                            <mixinSupport>true</mixinSupport>
+                            <extraSrgs>
+                                <srg>${project.basedir}/target/mixin.srg</srg>
+                            </extraSrgs>
                             <remappedDependencies>
                                 <remappedDependency>
                                     codecrafter47.multiworld:minecraft-server:${minecraft.version}:jar
-                                </remappedDependency>
-                                <remappedDependency>
-                                    org.projectrainbow:rainbow:${minecraft.version}-SNAPSHOT:jar
                                 </remappedDependency>
                             </remappedDependencies>
                         </configuration>
@@ -305,6 +244,7 @@
                 </executions>
             </plugin>
         </plugins>
+
     </build>
 
 </project>

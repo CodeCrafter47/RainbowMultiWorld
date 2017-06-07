@@ -22,7 +22,7 @@ public class MixinDimensionType {
     @Shadow
     @Final
     private Class<? extends WorldProvider> clazz;
-    @Shadow
+    @Shadow(remap = false)
     public static DimensionType[] values() {
         return null;
     }

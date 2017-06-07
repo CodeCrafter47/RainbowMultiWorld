@@ -10,6 +10,7 @@ import codecrafter47.multiworld.manager.StorageManager;
 import lombok.Getter;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.datafix.DataFixesManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
@@ -72,7 +73,7 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
     protected IChunkProvider createChunkProvider() {
         File worldDirectory = this.saveHandler.getWorldDirectory();
         File file = new File(worldDirectory, "DIM_" + getDimension());
-        IChunkLoader var1 = new AnvilChunkLoader(file, super.getMinecraftServer().getDataFixer());
+        IChunkLoader var1 = new AnvilChunkLoader(file, DataFixesManager.createFixer());
         return new ChunkProviderServer(this, var1, this.provider.createChunkGenerator());
     }
 

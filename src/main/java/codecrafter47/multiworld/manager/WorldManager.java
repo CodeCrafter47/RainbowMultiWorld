@@ -38,7 +38,7 @@ public class WorldManager {
 		String fileWorldName = "CustomWorld_" + entry.name;
 		System.out.println(String.format("Initializing Custom World \'%s\' as dimension \'%d\' w/seed %d...", new Object[] { entry.name, Integer.valueOf(entry.dimension), Long.valueOf(entry.settings.seed) }));
 		MinecraftServer server = _DiwUtils.getMinecraftServer();
-		entry.internal_loadedWorldIdx = server.worldServers.length;
+		entry.internal_loadedWorldIdx = server.worlds.length;
 		ISaveHandler dataManager = server.getActiveAnvilConverter().getSaveLoader(fileWorldName, true);
 		WorldType tgtLevelType = translateLevelType(entry.settings.levelType);
 		WorldSettings ws = new WorldSettings(entry.settings.seed, configuration.getGameMode(), entry.settings.generateStructures, server.isHardcore(), tgtLevelType);
@@ -57,18 +57,18 @@ public class WorldManager {
 		worldData.setTerrainType(tgtLevelType);
 		worldData.setDifficulty(configuration.getDifficulty());
 		worldData.setMapFeaturesEnabled(entry.settings.generateStructures);
-		int loadedIdx = server.worldServers.length;
+		int loadedIdx = server.worlds.length;
 
 		// make worldservers array bigger
-		WorldServer[] servers = new WorldServer[server.worldServers.length + 1];
-		for (int i = 0; i < server.worldServers.length; i++) {
-			WorldServer wserver = server.worldServers[i];
+		WorldServer[] servers = new WorldServer[server.worlds.length + 1];
+		for (int i = 0; i < server.worlds.length; i++) {
+			WorldServer wserver = server.worlds[i];
 			servers[i] = wserver;
 		}
-		WorldServer myWorld = (WorldServer)(new CustomWorldServer(server, dataManager, worldData, id, server.theProfiler)).init();
+		WorldServer myWorld = (WorldServer)(new CustomWorldServer(server, dataManager, worldData, id, server.profiler)).init();
 
 		servers[loadedIdx] = myWorld;
-		server.worldServers = servers;
+		server.worlds = servers;
 
 		long[][]ll = new long[server.timeOfLastDimensionTick.length + 1][];
 		for (int i = 0; i < server.timeOfLastDimensionTick.length; i++) {

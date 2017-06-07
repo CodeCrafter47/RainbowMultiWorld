@@ -32,7 +32,7 @@ public abstract class MixinBlockFire {
 	public void onBlockAdded(World var1, BlockPos var2, IBlockState var3) {
 		StorageManager storageManager = PluginMultiWorld.getInstance().getStorageManager();
 		if(var1.provider.getDimensionType().getId() > 0 || (var1 instanceof CustomWorldServer && storageManager.getCustomConfig(((CustomWorldServer)var1).getWorldId()).getGenerationType() == GenerationType.SINGLE_BIOME) || !Blocks.PORTAL.trySpawnPortal(var1, var2)) {
-			if(!var1.getBlockState(var2.down()).isFullyOpaque() && !this.canNeighborCatchFire(var1, var2)) {
+			if(!var1.getBlockState(var2.down()).isTopSolid() && !this.canNeighborCatchFire(var1, var2)) {
 				var1.setBlockToAir(var2);
 			} else {
 				var1.scheduleUpdate(var2, (Block) (Object) this, this.tickRate(var1) + var1.rand.nextInt(10));

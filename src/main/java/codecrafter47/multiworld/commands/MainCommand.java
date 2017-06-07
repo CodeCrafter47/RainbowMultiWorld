@@ -7,7 +7,6 @@ import PluginReference.MC_WorldBiomeType;
 import PluginReference.MC_WorldLevelType;
 import PluginReference.MC_WorldSettings;
 import PluginReference.RainbowUtils;
-import codecrafter47.multiworld.ChatPlayer;
 import codecrafter47.multiworld.PluginMultiWorld;
 import codecrafter47.multiworld.WorldConfiguration;
 import codecrafter47.multiworld._WorldMaster;
@@ -15,7 +14,7 @@ import codecrafter47.multiworld.api.Environment;
 import codecrafter47.multiworld.api.GenerationType;
 import codecrafter47.multiworld.manager.WorldManager;
 import codecrafter47.multiworld.util.AlignmentHelper;
-import codecrafter47.multiworld.util.ChatUtil;
+import codecrafter47.util.chat.ChatUtil;
 import joebkt._WorldRegistration;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -78,18 +77,18 @@ public class MainCommand implements MC_Command {
             return;
         }
         if (strings.length == 0) {
-            showHelp((ChatPlayer) player);
+            showHelp(player);
         } else if (strings[0].equals("tp") && strings.length == 2) {
             Integer id = Integer.valueOf(strings[1]);
             if (plugin.getWorldManager().isLoaded(id)) {
                 player.teleport(plugin.getServer().getWorld(id).getSpawnLocation());
             } else {
-                ((ChatPlayer) player).sendMessage(ChatUtil.parseString("&cWorld " + plugin.getWorldManager().getName(id) + " is not loaded! *&b[(load now)](/MultiWorld load " + id + ")"));
+                player.sendMessage(ChatUtil.parseBBCode("&cWorld " + plugin.getWorldManager().getName(id) + " is not loaded! *&b[(load now)](/MultiWorld load " + id + ")"));
             }
         } else if (strings[0].equals("create") && strings.length > 1) {
             String name = strings[1];
             if (_WorldMaster.mapDimensionToWorldName.values().contains(name)) {
-                ((ChatPlayer) player).sendMessage(ChatUtil.parseString("&cWorld " + name + " already exists"));
+                player.sendMessage(ChatUtil.parseBBCode("&cWorld " + name + " already exists"));
                 return;
             }
             MC_WorldSettings mc_worldSettings = new MC_WorldSettings();
@@ -98,57 +97,56 @@ public class MainCommand implements MC_Command {
             int id = _WorldMaster.RegisterWorld(name, mc_worldSettings);
             plugin.getStorageManager().getCustomConfig(id).setGenerationType(GenerationType.OVERWORLD);
             plugin.getStorageManager().saveData();
-            showWorldDetails((ChatPlayer) player, id);
+            showWorldDetails(player, id);
         } else if (strings[0].equals("remove") && strings.length == 2) {
             if (_WorldMaster.UnregisterWorld(_WorldMaster.GetWorldNameFromDimension(Integer.valueOf(strings[1])))) {
-                ((ChatPlayer) player).sendMessage(ChatUtil.parseString(
-                        "&aSuccessfully unregistered " + _WorldMaster.GetWorldNameFromDimension(Integer.valueOf(strings[1])) + "."));
+                player.sendMessage(ChatUtil.parseBBCode("&aSuccessfully unregistered " + _WorldMaster.GetWorldNameFromDimension(Integer.valueOf(strings[1])) + "."));
                 requiresRestart = true;
             } else {
-                ((ChatPlayer) player).sendMessage(ChatUtil.parseString("&cThere has been an error deleting the world."));
+                player.sendMessage(ChatUtil.parseBBCode("&cThere has been an error deleting the world."));
             }
-            showWorldList((ChatPlayer) player, 0);
+            showWorldList(player, 0);
         } else if (strings[0].equals("load") && strings.length == 2) {
             int id = Integer.valueOf(strings[1]);
-            ((ChatPlayer) player).sendMessage(text(ChatColor.GREEN, "Loading world. Please wait..."));
+            player.sendMessage(text(ChatColor.GREEN, "Loading world. Please wait..."));
             plugin.getWorldManager().loadWorld(id);
-            showWorldDetails((ChatPlayer) player, id);
+            showWorldDetails(player, id);
         } else if (strings[0].equals("list")) {
             int page = 0;
             try {
                 page = Integer.parseInt(strings[1]);
             } catch (Throwable ignored) {
             }
-            showWorldList((ChatPlayer) player, page);
+            showWorldList(player, page);
 
         } else if (strings[0].equals("modify") && strings.length == 2) {
             int id = Integer.valueOf(strings[1]);
-            showWorldDetails((ChatPlayer) player, id);
+            showWorldDetails(player, id);
         } else if (strings[0].equals("modify") && strings.length == 3) {
             int id = Integer.valueOf(strings[1]);
             toggleFlag(player, id, strings[2]);
-            showWorldDetails((ChatPlayer) player, id);
+            showWorldDetails(player, id);
         } else if (strings[0].equals("modify") && strings.length == 4) {
             int id = Integer.valueOf(strings[1]);
             setFlag(id, strings[2], strings[3]);
-            showWorldDetails((ChatPlayer) player, id);
+            showWorldDetails(player, id);
         } else if (strings[0].equals("gamerule") && strings.length == 4) {
             int id = Integer.valueOf(strings[1]);
             String gamerule = strings[2];
             String value = strings[3];
             _DiwUtils.getMinecraftServer().worldServerForDimension(id).getGameRules().setOrCreateGameRule(gamerule, value);
-            showWorldDetails((ChatPlayer) player, id);
+            showWorldDetails(player, id);
         } else if (strings[0].equals("inv") && strings.length == 1) {
-            showInvDetails((ChatPlayer) player);
+            showInvDetails(player);
         } else if (strings[0].equals("inv") && strings.length == 3 && strings[1].equals("addgroup")) {
             if (!plugin.getMultiInventoryManager().getGroups().contains(strings[2]))
                 plugin.getMultiInventoryManager().addGroup(strings[2]);
-            showInvDetails((ChatPlayer) player);
+            showInvDetails(player);
         } else if (strings[0].equals("inv") && strings.length == 4 && strings[1].equals("setgroup")) {
             plugin.getMultiInventoryManager().setGroupForWorld(getWorldByName(strings[2]), strings[3]);
-            showInvDetails((ChatPlayer) player);
+            showInvDetails(player);
         } else {
-            showHelp((ChatPlayer) player);
+            showHelp(player);
         }
     }
 
@@ -320,7 +318,7 @@ public class MainCommand implements MC_Command {
                 break;
             case "spawn":
                 if (id != player.getWorld().getDimension()) {
-                    ((ChatPlayer)player).sendMessage(text(ChatColor.RED, "You're in the wrong world."));
+                    player.sendMessage(text(ChatColor.RED, "You're in the wrong world."));
                     break;
                 }
                 BlockPos spawn = new BlockPos(player.getLocation().getBlockX(),
@@ -337,7 +335,7 @@ public class MainCommand implements MC_Command {
         }
     }
 
-    private void showHelp(ChatPlayer player) {
+    private void showHelp(MC_Player player) {
         // show help
         player.sendMessage(text(textColor, "\n\n\n\n\n\n\n\n\n"));
         player.sendMessage(header());
@@ -451,7 +449,7 @@ public class MainCommand implements MC_Command {
         return new ArrayList<>();
     }
 
-    public void showWorldList(ChatPlayer player, int page) {
+    public void showWorldList(MC_Player player, int page) {
         player.sendMessage(header(headerElementManageWorlds()));
         if (requiresRestart) {
             player.sendMessage(text(ChatColor.RED, "A restart is required to apply all changes!"));
@@ -554,7 +552,7 @@ public class MainCommand implements MC_Command {
         return hover(action(text(actionColor, name), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/MultiWorld modify " + id)), new HoverEvent(HoverEvent.Action.SHOW_TEXT, text(textColor, "Configure world " + name)));
     }
 
-    private void showInvDetails(ChatPlayer player) {
+    private void showInvDetails(MC_Player player) {
         player.sendMessage(header(headerElementManageInventories()));
         String groups = "";
         for (Iterator<String> iterator = plugin.getMultiInventoryManager().getGroups().iterator(); iterator.hasNext(); ) {
@@ -593,7 +591,7 @@ public class MainCommand implements MC_Command {
         player.sendMessage(line());
     }
 
-    public void showWorldDetails(ChatPlayer player, int id) {
+    public void showWorldDetails(MC_Player player, int id) {
         int lines = 2;
         WorldManager worldManager = plugin.getWorldManager();
         boolean customWorld = id > 1;

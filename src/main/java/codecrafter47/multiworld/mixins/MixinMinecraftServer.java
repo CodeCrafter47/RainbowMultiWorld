@@ -21,11 +21,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
     @Shadow
-    public WorldServer[] worldServers;
+    public WorldServer[] worlds;
 
     @Shadow
     private int tickCounter;
@@ -52,33 +53,29 @@ public class MixinMinecraftServer {
     @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"))
     private void updateTime(CallbackInfo ci) {
         if (this.tickCounter % 20 == 0) {
-            for (WorldServer worldServer : worldServers) {
+            for (WorldServer worldServer : worlds) {
                 this.playerList.sendPacketToAllPlayersInDimension(new SPacketTimeUpdate(worldServer.getTotalWorldTime(), worldServer.getWorldTime(), worldServer.getGameRules().getBoolean("doDaylightCycle")), ((MC_World) worldServer).getDimension());
             }
         }
     }
 
-    @Overwrite
-    public WorldServer worldServerForDimension(int var1) {
-        if (var1 == -1) {
-            return this.worldServers[1];
-        }
-        if (var1 == 1) {
-            return this.worldServers[2];
-        }
-        for (WorldServer worldServer : worldServers) {
-            if (worldServer instanceof CustomWorldServer && ((CustomWorldServer) worldServer).getWorldId() == var1) {
-                return worldServer;
+    @Inject(method = "worldServerForDimension", at = @At("HEAD"), cancellable = true)
+    private void worldServerForDimension(int dimension, CallbackInfoReturnable<WorldServer> ci) {
+        if (dimension > 1) {
+            for (int i = 3; i < worlds.length; i++) {
+                WorldServer worldServer = worlds[i];
+                if (worldServer instanceof CustomWorldServer && ((CustomWorldServer) worldServer).getWorldId() == dimension) {
+                    ci.setReturnValue(worldServer);
+                    return;
+                }
             }
         }
-
-        return this.worldServers[0];
     }
 
     @Overwrite
     public void setGameType(GameType var1) {
         for (int var2 = 0; var2 < 3; ++var2) {
-            this.worldServers[var2].getWorldInfo().setGameType(var1);
+            this.worlds[var2].getWorldInfo().setGameType(var1);
         }
     }
 }

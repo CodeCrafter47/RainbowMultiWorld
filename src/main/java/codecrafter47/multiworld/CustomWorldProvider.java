@@ -38,11 +38,11 @@ public class CustomWorldProvider extends WorldProvider {
     }
 
     @Override
-    protected void createBiomeProvider() {
-        this.f = true;
-        WorldType var1 = this.worldObj.getWorldInfo().getTerrainType();
+    protected void init() {
+        this.hasSkyLight = true;
+        WorldType var1 = this.world.getWorldInfo().getTerrainType();
         if(var1 == WorldType.FLAT) {
-            FlatGeneratorInfo var2 = FlatGeneratorInfo.createFlatGeneratorFromString(this.worldObj.getWorldInfo().getGeneratorOptions());
+            FlatGeneratorInfo var2 = FlatGeneratorInfo.createFlatGeneratorFromString(this.world.getWorldInfo().getGeneratorOptions());
             this.biomeProvider = new BiomeProviderSingle(Biome.getBiome(var2.getBiome(), Biomes.DEFAULT));
         } else {
             GenerationType generationType = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(this.worldId).getGenerationType();
@@ -52,10 +52,10 @@ public class CustomWorldProvider extends WorldProvider {
                 if (entry1 != null) {
                     this.biomeProvider = new BiomeProviderSingle((Biome) ((BiMap<Object, Object>) (Object) PluginHelper.biomeMap).inverse().get(entry1.settings.biomeType));
                 } else {
-                    this.biomeProvider = new BiomeProvider(this.worldObj.getWorldInfo());
+                    this.biomeProvider = new BiomeProvider(this.world.getWorldInfo());
                 }
             } else if (generationType == GenerationType.OVERWORLD) {
-                this.biomeProvider = new BiomeProvider(this.worldObj.getWorldInfo());
+                this.biomeProvider = new BiomeProvider(this.world.getWorldInfo());
             } else {
                 PluginMultiWorld.getInstance().getLogger().info("ERROR: This should not happen.");
             }
@@ -63,7 +63,7 @@ public class CustomWorldProvider extends WorldProvider {
     }
 
     @Override
-    public boolean getHasNoSky() {
+    public boolean hasNoSky() {
         Environment environment = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(this.worldId).getEnvironment();
         return environment == Environment.END;
     }
@@ -72,6 +72,6 @@ public class CustomWorldProvider extends WorldProvider {
     public boolean canDropChunk(int var1, int var2) {
         StorageManager storageManager = PluginMultiWorld.getInstance().getStorageManager();
         WorldConfiguration customConfig = storageManager.getCustomConfig(worldId);
-        return !(customConfig.isKeepSpawnInMemory() && this.worldObj.isSpawnChunk(var1, var2));
+        return !(customConfig.isKeepSpawnInMemory() && this.world.e(var1, var2)); // isSpawnChunk
     }
 }
