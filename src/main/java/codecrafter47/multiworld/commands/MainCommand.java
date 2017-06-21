@@ -134,7 +134,7 @@ public class MainCommand implements MC_Command {
             int id = Integer.valueOf(strings[1]);
             String gamerule = strings[2];
             String value = strings[3];
-            _DiwUtils.getMinecraftServer().worldServerForDimension(id).getGameRules().setOrCreateGameRule(gamerule, value);
+            _DiwUtils.getMinecraftServer().getWorld(id).getGameRules().setOrCreateGameRule(gamerule, value);
             showWorldDetails(player, id);
         } else if (strings[0].equals("inv") && strings.length == 1) {
             showInvDetails(player);
@@ -213,7 +213,7 @@ public class MainCommand implements MC_Command {
                     plugin.getStorageManager().saveData();
                 }
                 if (plugin.getWorldManager().isLoaded(id))
-                    _DiwUtils.getMinecraftServer().worldServerForDimension(id).getWorldInfo().setGameType(GameType.valueOf(value));
+                    _DiwUtils.getMinecraftServer().getWorld(id).getWorldInfo().setGameType(GameType.valueOf(value));
                 break;
             case "difficulty":
                 if (customWorld) {
@@ -221,7 +221,7 @@ public class MainCommand implements MC_Command {
                     plugin.getStorageManager().saveData();
                 }
                 if (plugin.getWorldManager().isLoaded(id))
-                    _DiwUtils.getMinecraftServer().worldServerForDimension(id).getWorldInfo().setDifficulty(EnumDifficulty.valueOf(value));
+                    _DiwUtils.getMinecraftServer().getWorld(id).getWorldInfo().setDifficulty(EnumDifficulty.valueOf(value));
                 break;
             case "environment":
                 if (customWorld) {
@@ -285,7 +285,7 @@ public class MainCommand implements MC_Command {
                     configuration.setSpawnAnimals(!configuration.isSpawnAnimals());
                     plugin.getStorageManager().saveData();
                     if (plugin.getWorldManager().isLoaded(id))
-                        _DiwUtils.getMinecraftServer().worldServerForDimension(id).setAllowedSpawnTypes(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
+                        _DiwUtils.getMinecraftServer().getWorld(id).setAllowedSpawnTypes(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
                 }
                 break;
             case "allowMonsters":
@@ -293,7 +293,7 @@ public class MainCommand implements MC_Command {
                     configuration.setSpawnMonsters(!configuration.isSpawnMonsters());
                     plugin.getStorageManager().saveData();
                     if (plugin.getWorldManager().isLoaded(id))
-                        _DiwUtils.getMinecraftServer().worldServerForDimension(id).setAllowedSpawnTypes(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
+                        _DiwUtils.getMinecraftServer().getWorld(id).setAllowedSpawnTypes(configuration.isSpawnMonsters(), configuration.isSpawnAnimals());
                 }
                 break;
             case "generateStructures":
@@ -328,7 +328,7 @@ public class MainCommand implements MC_Command {
                     plugin.getStorageManager().saveData();
                 }
                 if (plugin.getWorldManager().isLoaded(id))
-                    _DiwUtils.getMinecraftServer().worldServerForDimension(id).setSpawnPoint(spawn);
+                    _DiwUtils.getMinecraftServer().getWorld(id).setSpawnPoint(spawn);
                 break;
             default:
                 plugin.getLogger().warn("player tried to toggle invalid flag: " + string);
@@ -712,7 +712,7 @@ public class MainCommand implements MC_Command {
         if (customWorld) {
             current = configuration.getGameMode();
         } else {
-            current = _DiwUtils.getMinecraftServer().worldServerForDimension(id).getWorldInfo().getGameType();
+            current = _DiwUtils.getMinecraftServer().getWorld(id).getWorldInfo().getGameType();
         }
         for (GameType type : GameType.values()) {
             if (type == GameType.NOT_SET) {
@@ -732,7 +732,7 @@ public class MainCommand implements MC_Command {
         if (customWorld) {
             currentDifficulty = configuration.getDifficulty();
         } else {
-            currentDifficulty = _DiwUtils.getMinecraftServer().worldServerForDimension(id).getDifficulty();
+            currentDifficulty = _DiwUtils.getMinecraftServer().getWorld(id).getDifficulty();
         }
         for (EnumDifficulty type : EnumDifficulty.values()) {
             if (type == currentDifficulty) {
@@ -748,7 +748,7 @@ public class MainCommand implements MC_Command {
         if (customWorld) {
             spawn = configuration.getSpawn();
         } else {
-            spawn = _DiwUtils.getMinecraftServer().worldServerForDimension(id).getSpawnPoint();
+            spawn = _DiwUtils.getMinecraftServer().getWorld(id).getSpawnPoint();
         }
         if (spawn != null) {
             BaseComponent[] components = join(text(textColor, "Spawn: "), hover(action(text(actionColor, "" + spawn.getX() + ", " + spawn.getY() + ", " + spawn.getZ()), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/MultiWorld modify " + id + " spawn")), new HoverEvent(HoverEvent.Action.SHOW_TEXT, text(textColor, "Click to set spawn to your position"))));
@@ -769,7 +769,7 @@ public class MainCommand implements MC_Command {
         }
         // GAMERULES
         if (plugin.getWorldManager().isLoaded(id)) {
-            GameRules gameRules = _DiwUtils.getMinecraftServer().worldServerForDimension(id).getWorldInfo().getGameRulesInstance();
+            GameRules gameRules = _DiwUtils.getMinecraftServer().getWorld(id).getWorldInfo().getGameRulesInstance();
             text = text(textColor, "Game Rules: ");
             for (String gamerule : gameRules.getRules()) {
                 if (gameRules.areSameType(gamerule, GameRules.ValueType.BOOLEAN_VALUE)) {

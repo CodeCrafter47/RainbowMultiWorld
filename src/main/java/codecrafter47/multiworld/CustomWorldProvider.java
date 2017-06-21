@@ -63,7 +63,7 @@ public class CustomWorldProvider extends WorldProvider {
     }
 
     @Override
-    public boolean hasNoSky() {
+    public boolean hasSkyLight() {
         Environment environment = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(this.worldId).getEnvironment();
         return environment == Environment.END;
     }
@@ -72,6 +72,6 @@ public class CustomWorldProvider extends WorldProvider {
     public boolean canDropChunk(int var1, int var2) {
         StorageManager storageManager = PluginMultiWorld.getInstance().getStorageManager();
         WorldConfiguration customConfig = storageManager.getCustomConfig(worldId);
-        return !(customConfig.isKeepSpawnInMemory() && this.world.e(var1, var2)); // isSpawnChunk
+        return !(customConfig.isKeepSpawnInMemory() && this.world.isSpawnChunk(var1, var2));
     }
 }

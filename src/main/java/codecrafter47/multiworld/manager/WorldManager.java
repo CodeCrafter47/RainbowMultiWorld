@@ -99,7 +99,7 @@ public class WorldManager {
     protected void loadSpawnChunks(int worldId) {
         int var5 = 0;
         logger.info("Preparing start region for level " + worldId);
-        WorldServer var7 = _DiwUtils.getMinecraftServer().worldServerForDimension(worldId);
+        WorldServer var7 = _DiwUtils.getMinecraftServer().getWorld(worldId);
         BlockPos var8 = var7.getSpawnPoint();
         long var9 = getCurrentTimeMillis();
 
@@ -153,6 +153,6 @@ public class WorldManager {
 
 	public boolean isLoaded(int id){
 		if(id < 2)return true;
-		return _DiwUtils.getMinecraftServer().worldServerForDimension(id) instanceof CustomWorldServer;
+		return _DiwUtils.getMinecraftServer().getWorld(id) instanceof CustomWorldServer;
 	}
 }

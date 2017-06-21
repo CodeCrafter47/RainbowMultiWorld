@@ -58,12 +58,12 @@ public abstract class MixinEntity {
         // ignore
     }
 
-    @Redirect(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;worldServerForDimension(I)Lnet/minecraft/world/WorldServer;", ordinal = 0), expect = 1)
+    @Redirect(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getWorld(I)Lnet/minecraft/world/WorldServer;", ordinal = 0), expect = 1)
     private WorldServer onChangeDimension4(MinecraftServer server, int dimension, int targetDimension) {
-        return server.worldServerForDimension(this.dimension);
+        return server.getWorld(this.dimension);
     }
 
-    @Redirect(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;worldServerForDimension(I)Lnet/minecraft/world/WorldServer;", ordinal = 1), expect = 1)
+    @Redirect(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getWorld(I)Lnet/minecraft/world/WorldServer;", ordinal = 1), expect = 1)
     private WorldServer onChangeDimension5(MinecraftServer server, int dimension, int targetDimension) {
         if (this.world instanceof CustomWorldServer) {
             if (targetDimension == 1) {
@@ -76,6 +76,6 @@ public abstract class MixinEntity {
         } else {
             this.dimension = targetDimension;
         }
-        return server.worldServerForDimension(this.dimension);
+        return server.getWorld(this.dimension);
     }
 }

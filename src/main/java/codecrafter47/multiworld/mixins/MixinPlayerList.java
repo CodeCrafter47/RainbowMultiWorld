@@ -11,13 +11,13 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.*;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.DemoPlayerInteractionManager;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.demo.DemoWorldManager;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -90,21 +90,21 @@ public abstract class MixinPlayerList {
         oldPlayer.getServerWorld().getEntityTracker().untrack(oldPlayer);
         oldPlayer.getServerWorld().getPlayerChunkMap().removePlayer(oldPlayer);
         this.playerEntityList.remove(oldPlayer);
-        this.mcServer.worldServerForDimension(oldPlayer.dimension).removeEntityDangerously(oldPlayer);
+        this.mcServer.getWorld(oldPlayer.dimension).removeEntityDangerously(oldPlayer);
         BlockPos bedLocation = oldPlayer.getBedLocation();
         boolean var5 = oldPlayer.isSpawnForced();
         oldPlayer.dimension = newWorldId;
         Object interactManager;
         if (this.mcServer.isDemo()) {
-            interactManager = new DemoWorldManager(this.mcServer.worldServerForDimension(oldPlayer.dimension));
+            interactManager = new DemoPlayerInteractionManager(this.mcServer.getWorld(oldPlayer.dimension));
         } else {
-            interactManager = new PlayerInteractionManager(this.mcServer.worldServerForDimension(oldPlayer.dimension));
+            interactManager = new PlayerInteractionManager(this.mcServer.getWorld(oldPlayer.dimension));
         }
 
-        EntityPlayerMP newPlayer = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(oldPlayer.dimension), oldPlayer.getGameProfile(), (PlayerInteractionManager) interactManager);
+        EntityPlayerMP newPlayer = new EntityPlayerMP(this.mcServer, this.mcServer.getWorld(oldPlayer.dimension), oldPlayer.getGameProfile(), (PlayerInteractionManager) interactManager);
         newPlayer.dimension = oldPlayer.dimension;
         newPlayer.connection = oldPlayer.connection;
-        newPlayer.clonePlayer(oldPlayer, force);
+        newPlayer.copyFrom(oldPlayer, force);
         newPlayer.setEntityId(oldPlayer.getEntityId());
         newPlayer.setCommandStats(oldPlayer);
         newPlayer.setPrimaryHand(oldPlayer.getPrimaryHand());
@@ -115,11 +115,11 @@ public abstract class MixinPlayerList {
             newPlayer.addTag(var9);
         }
 
-        WorldServer var10 = this.mcServer.worldServerForDimension(oldPlayer.dimension);
+        WorldServer var10 = this.mcServer.getWorld(oldPlayer.dimension);
         this.setPlayerGameTypeBasedOnOther(newPlayer, oldPlayer, var10);
         BlockPos var11;
         if (bedLocation != null) {
-            var11 = EntityPlayer.getBedSpawnLocation(this.mcServer.worldServerForDimension(oldPlayer.dimension), bedLocation, var5);
+            var11 = EntityPlayer.getBedSpawnLocation(this.mcServer.getWorld(oldPlayer.dimension), bedLocation, var5);
             if (var11 != null) {
                 newPlayer.setLocationAndAngles((double) ((float) var11.getX() + 0.5F), (double) ((float) var11.getY() + 0.1F), (double) ((float) var11.getZ() + 0.5F), 0.0F, 0.0F);
                 newPlayer.setSpawnPoint(bedLocation, var5);
@@ -201,9 +201,9 @@ public abstract class MixinPlayerList {
     @Overwrite
     public void changePlayerDimension(EntityPlayerMP var1, int var2) {
         int var3 = var1.dimension;
-        WorldServer var4 = this.mcServer.worldServerForDimension(var1.dimension);
+        WorldServer var4 = this.mcServer.getWorld(var1.dimension);
         var1.dimension = var2;
-        WorldServer var5 = this.mcServer.worldServerForDimension(var1.dimension);
+        WorldServer var5 = this.mcServer.getWorld(var1.dimension);
         int packetDimen = getDimensionByEnvironment(var2);
         int oldDimension = getDimensionByEnvironment(var3);
         if (oldDimension == packetDimen) {

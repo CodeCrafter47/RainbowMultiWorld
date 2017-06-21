@@ -59,7 +59,7 @@ public class MixinMinecraftServer {
         }
     }
 
-    @Inject(method = "worldServerForDimension", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getWorld", at = @At("HEAD"), cancellable = true)
     private void worldServerForDimension(int dimension, CallbackInfoReturnable<WorldServer> ci) {
         if (dimension > 1) {
             for (int i = 3; i < worlds.length; i++) {

@@ -37,7 +37,7 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
     public CustomWorldServer(MinecraftServer minecraftServer, ISaveHandler iSaveHandler, WorldInfo worldInfo, int worldId, Profiler profiler) {
         super(minecraftServer, iSaveHandler, worldInfo, staticId = worldId, profiler);
         this.worldId = worldId;
-        worldScoreboard = minecraftServer.worldServerForDimension(0).getScoreboard();
+        worldScoreboard = minecraftServer.getWorld(0).getScoreboard();
     }
 
     public int getWorldId() {
@@ -135,7 +135,7 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
 
     @Override
     public MC_World getRespawnWorld() {
-        return (MC_World) _DiwUtils.getMinecraftServer().worldServerForDimension(getWC().getRespawnWorld());
+        return (MC_World) _DiwUtils.getMinecraftServer().getWorld(getWC().getRespawnWorld());
     }
 
     @Override
@@ -149,7 +149,7 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
     @Override
     public MC_World getNetherPortalTarget() {
         int i = getWC().getNetherPortalTarget();
-        return i >= -1 ? (MC_World) _DiwUtils.getMinecraftServer().worldServerForDimension(i) : null;
+        return i >= -1 ? (MC_World) _DiwUtils.getMinecraftServer().getWorld(i) : null;
     }
 
     @Override
@@ -161,7 +161,7 @@ public class CustomWorldServer extends WorldServer implements CustomWorld {
     @Override
     public MC_World getEndPortalTarget(MC_World world) {
         int i = getWC().getEndPortalTarget();
-        return i >= -1 ? (MC_World) _DiwUtils.getMinecraftServer().worldServerForDimension(i) : null;
+        return i >= -1 ? (MC_World) _DiwUtils.getMinecraftServer().getWorld(i) : null;
     }
 
     @Override
