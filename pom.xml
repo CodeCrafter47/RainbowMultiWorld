@@ -6,7 +6,7 @@
 
     <groupId>codecrafter47</groupId>
     <artifactId>MultiWorld</artifactId>
-    <version>1.12.1-SNAPSHOT</version>
+    <version>1.12.2-SNAPSHOT</version>
 
     <repositories>
         <repository>
@@ -39,8 +39,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <minecraft.version>1.12.1</minecraft.version>
-        <rainbow.version>1.12.1-SNAPSHOT</rainbow.version>
+        <minecraft.version>1.12.2</minecraft.version>
+        <rainbow.version>1.12.2-SNAPSHOT</rainbow.version>
     </properties>
 
     <dependencies>
@@ -170,7 +170,7 @@
                             <outputDirectory>
                                 ${project.build.directory}
                             </outputDirectory>
-                            <md5>4ad498b14910c51f8ec919525fd101c6</md5>
+                            <md5>71728ed3fbd0acd1394bf3ade2649a5c</md5>
                         </configuration>
                     </execution>
                 </executions>

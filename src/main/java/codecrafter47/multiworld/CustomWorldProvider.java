@@ -65,7 +65,7 @@ public class CustomWorldProvider extends WorldProvider {
     @Override
     public boolean hasSkyLight() {
         Environment environment = PluginMultiWorld.getInstance().getStorageManager().getCustomConfig(this.worldId).getEnvironment();
-        return environment == Environment.END;
+        return environment != Environment.END;
     }
 
     @Override
